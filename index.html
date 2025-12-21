@@ -1,0 +1,33 @@
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kris & frank</title>
+    <script src="./assets/js/react.production.min.js"></script>
+    <script src="./assets/js/react-dom.production.min.js"></script>
+    <script src="./assets/js/tailwind.min.js"></script>
+    <style type="text/tailwindcss">
+        @theme {
+        /* Accent principal — cyan techno, bon en CTA, charts, liens */
+        --color-primary:         #00B5D8; /* cyan 500-ish */
+        --color-primary-light:   #33C7E0; /* hover clair / badges */
+        --color-primary-dark:    #0A8FA0; /* hover sombre / focus */
+
+        /* Secondaire — indigo/blurple pour états, focus rings, tabs */
+        --color-secondary:       #4F46E5; /* indigo 600 */
+        --color-secondary-light: #6366F1; /* indigo 500-400 (hover clair) */
+        --color-secondary-dark:  #4338CA; /* indigo 700 (hover sombre) */
+
+        /* Tertiaire — neutres “slate” légèrement bleutés (fond, cards) */
+        --color-tertiary:        #0F172A; /* slate 900 (fond dark / headers) */
+        --color-tertiary-light:  #1E293B; /* slate 800 (cards, panels) */
+        --color-tertiary-dark:   #0B1220; /* quasi bleu-noir (app bars) */
+       }
+        @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="root"></div>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
