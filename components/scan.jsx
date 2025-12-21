@@ -7,7 +7,7 @@ const WelcomePanel = () => {
     const imageSrc = "./assets/images/scan/wedding-welcome.png";
     const imageAlt = "Bienvenue au mariage";
     return (
-        <section className="relative w-full md:w-1/2 h-screen flex items-center justify-center">
+        <section className="relative w-full md:w-1/2 h-screen flex flex-col  items-center justify-center">
             <img
                 src="./assets/images/scan/top-left-1.png"
                 alt=""
@@ -33,6 +33,15 @@ const WelcomePanel = () => {
                 aria-hidden="true"
             />
 
+            <div className="w-full h-auto text-center relative z-20 mb-4">
+                <p className="playfair-display text-[28px] text-gray-700 italic">
+                    Bienvenue au mariage de
+                </p>
+                <p className="playfair-display text-[42px] text-[#8B4513] font-bold">
+                    Kristel & Frank
+                </p>
+            </div>
+
             <img
                 src={imageSrc}
                 alt={imageAlt}
@@ -44,7 +53,53 @@ const WelcomePanel = () => {
     );
 };
 
-const ScanPanel = ({ onQrDetected }) => {
+const updatePageMetadata = (href, title = 'Kristel & Frank - Mariage') => {
+    const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    link.type = 'image/png';
+    link.rel = 'icon';
+    link.href = href;
+    document.getElementsByTagName('head')[0].appendChild(link);
+    
+    document.title = title;
+};
+
+updatePageMetadata('./assets/images/initial.png');
+
+const guestListExample = [
+    {
+        nom: "Johan Kabo",
+        telephone: "+237690123456",
+        code: "QR001",
+        table: "ROME"
+    },
+    {
+        nom: "Fotso Jean",
+        telephone: "+237691234567",
+        code: "QR002",
+        table: "PARIS"
+    },
+    {
+        nom: "Mbarga Sophie",
+        telephone: "+237692345678",
+        code: "QR003",
+        table: "LONDRES"
+    },
+    {
+        nom: "Tchoua Pierre",
+        telephone: "+237693456789",
+        code: "QR004",
+        table: "ROME"
+    },
+    {
+        nom: "Kamga Claire",
+        telephone: "+237694567890",
+        code: "QR005",
+        table: "MADRID"
+    }
+];
+
+
+const ScanPanel = ({ guestList=guestListExample }) => {
   const qrSrc = "./assets/images/scan/qr.png";
   const title = "Instants du mariage";
   const subtitle = "Scannez pour découvrir tous les\ninstants capturés de l'évènement";
@@ -52,6 +107,27 @@ const ScanPanel = ({ onQrDetected }) => {
   const adviceTitle = "Conseil";
   const adviceText = "Présentez votre QR Code sur\nla camera de l'écran pour le\nvérifier.";
   const adviceImageSrc = "./assets/images/scan/scan-advice.png";
+
+  const [scanResult, setScanResult] = useState(null);
+  const [accessDenied, setAccessDenied] = useState(false);
+
+  const handleQrDetected = (qrValue) => {
+    const guest = guestList.find(g => g.code === qrValue);
+    
+    if (guest) {
+      setScanResult(guest);
+      setAccessDenied(false);
+      setTimeout(() => {
+        setScanResult(null);
+      }, 5000);
+    } else {
+      setAccessDenied(true);
+      setScanResult(null);
+      setTimeout(() => {
+        setAccessDenied(false);
+      }, 5000);
+    }
+  };
 
   return (
     <section className="w-full md:w-1/2 min-h-screen">
@@ -94,7 +170,27 @@ const ScanPanel = ({ onQrDetected }) => {
             </p>
 
             <div className="flex-1 flex items-center justify-center">
-              <QrScannerBox onQrDetected={onQrDetected} />
+              {scanResult ? (
+                <div className="bg-white rounded-[22px] px-8 py-12 shadow-2xl text-center max-w-md w-full">
+                  <p className="text-[32px] font-bold mb-8 playfair-display italic underline">
+                    ACCÈS AUTORISÉ !!
+                  </p>
+                  <p className="text-[#8B0000] text-[36px] font-semibold mb-6 playfair-display">
+                    {scanResult.nom}
+                  </p>
+                  <p className="text-[#B8A07A] text-[24px] font-semibold playfair-display uppercase">
+                    TABLE {scanResult.table}
+                  </p>
+                </div>
+              ) : accessDenied ? (
+                <div className="bg-white rounded-[22px] px-8 py-12 shadow-2xl text-center max-w-md w-full">
+                  <p className="text-[#8B0000] text-[32px] font-bold playfair-display italic underline">
+                    ACCÈS NON AUTORISÉ
+                  </p>
+                </div>
+              ) : (
+                <QrScannerBox onQrDetected={handleQrDetected} />
+              )}
             </div>
           </div>
 
@@ -282,7 +378,7 @@ const QrScannerBox = ({ onQrDetected }) => {
             const code = await detectQr(imageData);
             if (code?.data) {
               const decoded = decodeValue(code.data);
-              setResult((prev) => (prev === decoded ? prev : decoded));
+              // setResult((prev) => (prev === decoded ? prev : decoded));
 
               if (lastValueRef.current !== decoded) {
                 lastValueRef.current = decoded;
