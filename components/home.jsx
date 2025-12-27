@@ -260,6 +260,454 @@ const Section5 = ()=>{
     );
 }
 
+const Section6 = ()=>{
+    const items = [
+        {
+            day: '27',
+            month: 'Février',
+            imageSrc: './assets/images/site/poster1.png',
+            time: '19h00',
+            title: 'CÉRÉMONIE',
+            subtitle: 'TRADITIONNELLE',
+            locationLabel: 'Domicile de la Mariée',
+            mapImageSrc: './assets/images/site/poster.png',
+        },
+    ];
+
+    const CalendarItem = ({
+        day,
+        month,
+        imageSrc,
+        time,
+        title,
+        subtitle,
+        locationLabel,
+        mapImageSrc,
+    }) => {
+        return (
+            <div className="w-full rounded-xl bg-white overflow-hidden px-6 pt-7 pb-5 space-y-5">
+                <div className="flex flex-col items-center text-center">
+                    <div className="relative w-[120px] h-[120px] flex items-center justify-center">
+                        <div className="absolute inset-0 rounded-full border border-black/30" />
+                        <div className="flex flex-col items-center justify-center">
+                            <p className="wedding-serif text-[#5B2A16] text-[30px] leading-none font-semibold">
+                                {day}
+                            </p>
+                            <p className="wedding-serif text-[#5B2A16] text-[16px] tracking-[0.22em]">
+                                {month}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="mt-5 w-full">
+                        <div className="relative w-full h-[180px]">
+                            <div className="absolute inset-[10px] rounded-[9999px] border border-black/25" />
+                            <div className="absolute inset-[22px] rounded-[9999px] overflow-hidden">
+                                <img
+                                    src={imageSrc}
+                                    alt={title}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 flex items-center justify-center gap-2">
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="opacity-70"
+                        >
+                            <path
+                                d="M12 8V12L14.5 13.5"
+                                stroke="#5B2A16"
+                                strokeWidth="1.8"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                            <path
+                                d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
+                                stroke="#5B2A16"
+                                strokeWidth="1.8"
+                            />
+                        </svg>
+                        <p className="wedding-serif text-[#5B2A16] text-[14px] tracking-[0.25em]">
+                            {time}
+                        </p>
+                    </div>
+
+                    <p className="wedding-serif text-[#5B2A16] text-[24px] tracking-[0.22em] mt-4">
+                        {title}
+                    </p>
+                    <p className="wedding-serif text-[#5B2A16] text-[24px] tracking-[0.22em] font-semibold mt-1">
+                        {subtitle}
+                    </p>
+
+                    <div className="mt-5 w-full flex items-center justify-center gap-2">
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="opacity-70"
+                        >
+                            <path
+                                d="M12 21s7-4.438 7-11a7 7 0 10-14 0c0 6.562 7 11 7 11z"
+                                stroke="#5B2A16"
+                                strokeWidth="1.8"
+                                strokeLinejoin="round"
+                            />
+                            <path
+                                d="M12 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"
+                                stroke="#5B2A16"
+                                strokeWidth="1.8"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
+                        <p className="wedding-serif text-[#5B2A16] text-[16px]">
+                            {locationLabel}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="w-full rounded-xl overflow-hidden">
+                    <img
+                        src={mapImageSrc}
+                        alt="Map"
+                        className="w-full h-[140px] object-cover"
+                    />
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <section className="w-full bg-[#efefef]">
+            <div className="w-full flex flex-col items-center px-6  py-12">
+                <div className="w-full relative overflow-hidden px-5">
+                    <p className="wedding-serif text-black text-[14px] mb-5 tracking-[0.24em] text-center">
+                        MARIAGE VENDREDI & SAMEDI
+                    </p>
+                    <p className="wedding-serif text-[#7A1F1B] text-[20px] tracking-[0.22em] font-semibold text-center mt-1">
+                        CALENDRIER DE LA CÉRÉMONIE
+                    </p>
+                </div>
+
+                <div className="w-full mt-10 flex flex-col gap-10">
+                    {items.map((item, idx) => (
+                        <CalendarItem key={idx} {...item} />
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+const Section7 = ()=>{
+    const images = [
+        { src: './assets/images/site/poster1.png', alt: 'Souvenir 1' },
+        { src: './assets/images/site/poster.png', alt: 'Souvenir 2' },
+        { src: './assets/images/site/poster1.png', alt: 'Souvenir 3' },
+    ];
+
+    return (
+        <section className="w-full bg-white py-12">
+            <div className="w-full max-w-[520px] mx-auto px-6">
+                <div className="w-full flex flex-col items-center">
+                    <p className="wedding-serif text-black/60 text-[12px] tracking-[0.35em] text-center">
+                        DOUX SOUVENIRS
+                    </p>
+                    <h2 className="wedding-serif text-[#7A1F1B] text-[22px] tracking-[0.22em] text-center font-semibold mt-3">
+                        NOS INSTANTS
+                        <br />
+                        CAPTURÉS
+                    </h2>
+
+                    <div className="w-full mt-10 flex flex-col gap-10">
+                        <div className="w-full rounded-[14px] overflow-hidden bg-white">
+                            <img
+                                src={images[0].src}
+                                alt={images[0].alt}
+                                className="w-full h-[320px] object-cover"
+                            />
+                        </div>
+
+                        <div className="w-full rounded-[14px] overflow-hidden bg-white">
+                            <img
+                                src={images[1].src}
+                                alt={images[1].alt}
+                                className="w-full h-[260px] object-cover"
+                            />
+                        </div>
+
+                        <div className="w-full text-center py-2">
+                            <p className="wedding-serif w-full text-black text-[18px] tracking-[0.08em] font-semibold leading-snug">
+                                " CHAQUE HISTOIRE D'AMOUR COMMENCE PAR UN REGARD ET SE TISSE DANS LES SILENCES PARTAGÉS "
+                            </p>
+                        </div>
+                        <div className="w-full rounded-[14px] overflow-hidden bg-white">
+                            <img
+                                src={images[2].src}
+                                alt={images[2].alt}
+                                className="w-full h-[320px] object-cover"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+const Section8 = ()=>{
+    const [name, setName] = useState('');
+    const [message, setMessage] = useState('');
+    const [messages, setMessages] = useState([
+        {
+            id: '1',
+            name: 'Cassandra',
+            message: 'Jolie couple ',
+        },
+        {
+            id: '2',
+            name: 'Jean',
+            message: 'Que Dieu bénisse votre union.',
+        },
+        {
+            id: '3',
+            name: 'Marie',
+            message: 'Félicitations aux mariés!',
+        },
+    ]);
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        const trimmedName = name.trim();
+        const trimmedMessage = message.trim();
+        if (!trimmedName || !trimmedMessage) return;
+
+        setMessages((prev) => [
+            {
+                id: String(Date.now()),
+                name: trimmedName,
+                message: trimmedMessage,
+            },
+            ...prev,
+        ]);
+        setName('');
+        setMessage('');
+    };
+
+    const MessageCard = ({ name: author, message: body }) => {
+        return (
+            <div className="relative w-full rounded-[14px] bg-white border border-black/10 px-4 py-4 overflow-hidden">
+                <img
+                    src="./assets/images/site/section3-fleur2.png"
+                    alt="Décor"
+                    className="absolute -top-10 -right-10 w-[120px] opacity-20 pointer-events-none select-none"
+                />
+                <div className="relative flex items-start gap-3">
+                    <div className="w-[28px] h-[28px] rounded-full bg-[#7A1F1B]/10 flex items-center justify-center">
+                        <div className="w-[10px] h-[10px] rounded-full bg-[#7A1F1B]" />
+                    </div>
+                    <div className="flex-1">
+                        <p className="wedding-serif text-[#7A1F1B] text-[14px] font-semibold">
+                            {author}
+                        </p>
+                        <p className="wedding-serif text-black/80 text-[14px] mt-1">
+                            {body}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    // Duplicate messages for seamless loop
+    const duplicatedMessages = [...messages, ...messages];
+
+    return (
+        <section className="w-full bg-[#efefef] py-12">
+            <div className="w-full max-w-[520px] mx-auto px-6">
+                <div className="w-full flex flex-col items-center">
+                    <h2 className="wedding-serif text-black text-[16px] tracking-[0.25em] text-center font-semibold">
+                        LAISSER NOUS UN
+                        <br />
+                        MESSAGE
+                    </h2>
+
+                    <form
+                        onSubmit={onSubmit}
+                        className="w-full mt-8 p-5"
+                    >
+                        <div className="w-full space-y-3">
+                            <div className="w-full">
+                                <input
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="* Votre nom"
+                                    className="w-full h-[44px] rounded-[10px] bg-white border border-black/10 px-4 wedding-serif text-[14px] outline-none focus:border-[#5B2A16]/40 transition-colors"
+                                />
+                            </div>
+
+                            <div className="w-full">
+                                <textarea
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    placeholder="* Tapez le message"
+                                    rows={3}
+                                    className="w-full h-[150px] rounded-[10px] bg-white border border-black/10 px-4 py-3 wedding-serif text-[14px] outline-none resize-none focus:border-[#5B2A16]/40 transition-colors"
+                                />
+                            </div>
+
+                            <div className="w-full flex justify-center -mt-7">
+                                <button
+                                    type="submit"
+                                    className="py-2 px-6 rounded-[10px] bg-[#5B2A16] text-white wedding-serif text-[14px] tracking-[0.06em] hover:bg-[#4a2312] transition-colors max-w-[300px]"
+                                >
+                                    Envoyez le message
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div className="w-full mt-8 overflow-hidden">
+                        <style>{`
+                            @keyframes marquee {
+                                0% { transform: translateX(0); }
+                                100% { transform: translateX(-50%); }
+                            }
+                            .marquee-container {
+                                display: flex;
+                                animation: marquee 20s linear infinite;
+                            }
+                            .marquee-container:hover {
+                                animation-play-state: paused;
+                            }
+                        `}</style>
+                        <div className="marquee-container">
+                            {duplicatedMessages.map((m, index) => (
+                                <div key={`${m.id}-${index}`} className="w-[260px] flex-shrink-0 mx-2">
+                                    <MessageCard name={m.name} message={m.message} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+const Footer = ()=>{
+    const ContactRow = ({ icon, text }) => {
+        return (
+            <div className="flex items-start gap-3">
+                <div className="w-[34px] h-[34px] rounded-[10px] bg-black flex items-center justify-center">
+                    {icon}
+                </div>
+                <p className="wedding-serif text-white/80 text-[14px] leading-tight mt-[6px]">
+                    {text}
+                </p>
+            </div>
+        );
+    };
+
+    return (
+        <footer className="w-full bg-[#4a2312]">
+            <div className="w-full max-w-[520px] mx-auto px-6 py-12">
+                <div className="w-full">
+                    <div className="flex items-center gap-3">
+                        <div className="w-[36px] h-[36px] rounded-full bg-[#4c3470] flex items-center justify-center">
+                            <p className="wedding-serif text-white text-[16px] font-semibold">D</p>
+                        </div>
+                        <p className="wedding-serif text-white text-[22px] font-bold">
+                            Danma
+                        </p>
+                    </div>
+
+                    <div className="mt-6 space-y-2">
+                        <p className="wedding-serif text-white/90 text-[14px] leading-relaxed">
+                            Vous préparez un mariage ou un événement special ?
+                        </p>
+                        <p className="wedding-serif text-white/80 text-[14px] leading-relaxed">
+                            Offrez à vos invités une expérience unique grâce à un site vitrine personnalisée, un
+                            système d’invitation moderne avec billet digital, QR code, galerie photo…
+                        </p>
+                        <p className="wedding-serif text-white/80 text-[14px] leading-relaxed">
+                            Élégant, pratique et mémorable.
+                        </p>
+                        <p className="wedding-serif text-white/80 text-[14px] leading-relaxed">
+                            Contactez-nous pour créer le vôtre sur mesure.
+                        </p>
+                    </div>
+
+                    <div className="mt-10">
+                        <p className="wedding-serif text-white text-[16px] font-semibold">
+                            Contact Informations
+                        </p>
+
+                        <div className="mt-5 space-y-4">
+                            <ContactRow
+                                text="kabojohna@gmail.com"
+                                icon={
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4 6h16v12H4V6z" stroke="white" strokeWidth="1.7" strokeLinejoin="round" />
+                                        <path d="M4 7l8 6 8-6" stroke="white" strokeWidth="1.7" strokeLinejoin="round" />
+                                    </svg>
+                                }
+                            />
+
+                            <ContactRow
+                                text="+ (237) 674 - 671 - 243"
+                                icon={
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M7 2h4l2 5-3 2c1.2 2.7 3.3 4.8 6 6l2-3 5 2v4c0 1.1-.9 2-2 2C10.3 22 2 13.7 2 3c0-1.1.9-2 2-2h3z"
+                                            stroke="white"
+                                            strokeWidth="1.7"
+                                            strokeLinejoin="round"
+                                        />
+                                    </svg>
+                                }
+                            />
+
+                            <ContactRow
+                                text="Douala Cameroun"
+                                icon={
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 21s7-4.438 7-11a7 7 0 10-14 0c0 6.562 7 11 7 11z"
+                                            stroke="white"
+                                            strokeWidth="1.7"
+                                            strokeLinejoin="round"
+                                        />
+                                        <path
+                                            d="M12 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"
+                                            stroke="white"
+                                            strokeWidth="1.7"
+                                            strokeLinejoin="round"
+                                        />
+                                    </svg>
+                                }
+                            />
+                        </div>
+                    </div>
+
+                    <div className="mt-10 pt-6 border-t border-white/10">
+                        <p className="wedding-serif text-white/70 text-[12px]">
+                            Copyright  Danma. All rights reserved.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    );
+}
 
 const updatePageMetadata = (href, title = 'Kristel & Frank - Mariage') => {
     const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
@@ -337,12 +785,15 @@ const Main = () => {
                 </div>
                 <Section2 />
                 <div className="relative">
-
                     <img src="assets/images/site/section3-fleur1.png" className="absolute rotate-180 right-0 w-[200px]" />
                     <Section3 />
                     <Section4 />
                     <Section5 />
+                    <Section6 />
+                    <Section7 />
+                    <Section8 />
                 </div>
+                <Footer />
             </div>
             <div className="hidden md:flex items-center justify-center py-10 h-screen">
                 <p className="wedding-serif text-[18px] text-gray-800 text-center max-w-md font-bold">
