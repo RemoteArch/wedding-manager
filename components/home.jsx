@@ -441,9 +441,11 @@ const Section6 = ()=>{
 
 const Section7 = ()=>{
     const images = [
-        { src: './assets/images/site/poster1.png', alt: 'Souvenir 1' },
-        { src: './assets/images/site/poster.png', alt: 'Souvenir 2' },
-        { src: './assets/images/site/poster1.png', alt: 'Souvenir 3' },
+        { src: './assets/images/site/poster2.png', alt: 'Souvenir 1' },
+        { src: './assets/images/site/poster3.png', alt: 'Souvenir 2' },
+        { src: './assets/images/site/poster4.png', alt: 'Souvenir 3' },
+        { src: './assets/images/site/poster5.png', alt: 'Souvenir 4' },
+        { src: './assets/images/site/poster6.png', alt: 'Souvenir 5' },
     ];
 
     return (
@@ -485,6 +487,22 @@ const Section7 = ()=>{
                             <img
                                 src={images[2].src}
                                 alt={images[2].alt}
+                                className="w-full h-[320px] object-cover"
+                            />
+                        </div>
+
+                        <div className="w-full rounded-[14px] overflow-hidden bg-white">
+                            <img
+                                src={images[3].src}
+                                alt={images[3].alt}
+                                className="w-full h-[320px] object-cover"
+                            />
+                        </div>
+
+                        <div className="w-full rounded-[14px] overflow-hidden bg-white">
+                            <img
+                                src={images[4].src}
+                                alt={images[4].alt}
                                 className="w-full h-[320px] object-cover"
                             />
                         </div>
