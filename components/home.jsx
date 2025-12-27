@@ -265,12 +265,42 @@ const Section6 = ()=>{
         {
             day: '27',
             month: 'Février',
-            imageSrc: './assets/images/site/poster1.png',
+            imageSrc: './assets/images/site/hotel-ville.png',
             time: '19h00',
             title: 'CÉRÉMONIE',
             subtitle: 'TRADITIONNELLE',
             locationLabel: 'Domicile de la Mariée',
-            mapImageSrc: './assets/images/site/poster.png',
+            mapImageSrc: './assets/images/site/location.png',
+        },
+        {
+            day: '28',
+            month: 'Février',
+            imageSrc: './assets/images/site/hotel-ville.png',
+            time: 'A 10H00',
+            title: 'ETAT CIVIL',
+            subtitle: '',
+            locationLabel: 'Centre d\u2019état civil de Logbaba',
+            mapImageSrc: './assets/images/site/location.png',
+        },
+        {
+            day: '28',
+            month: 'Février',
+            imageSrc: './assets/images/site/recpetion.png',
+            time: 'A 14H00',
+            title: 'BÉNÉDICTION',
+            subtitle: 'NUPTIALE',
+            locationLabel: 'EEC Paroisse de Ndognpassi 3',
+            mapImageSrc: './assets/images/site/location.png',
+        },
+        {
+            day: '28',
+            month: 'Février',
+            imageSrc: './assets/images/site/recpetion.png',
+            time: 'A 20H00',
+            title: 'RÉCEPTION',
+            subtitle: '',
+            locationLabel: 'Salle de fête de Cplan',
+            mapImageSrc: './assets/images/site/location.png',
         },
     ];
 
@@ -342,9 +372,11 @@ const Section6 = ()=>{
                     <p className="wedding-serif text-[#5B2A16] text-[24px] tracking-[0.22em] mt-4">
                         {title}
                     </p>
-                    <p className="wedding-serif text-[#5B2A16] text-[24px] tracking-[0.22em] font-semibold mt-1">
-                        {subtitle}
-                    </p>
+                    {subtitle ? (
+                        <p className="wedding-serif text-[#5B2A16] text-[24px] tracking-[0.22em] font-semibold mt-1">
+                            {subtitle}
+                        </p>
+                    ) : null}
 
                     <div className="mt-5 w-full flex items-center justify-center gap-2">
                         <svg
