@@ -1,3 +1,24 @@
+const getQrCodeFromUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('code');
+};
+
+const code = getQrCodeFromUrl();
+let inviteData = null;
+
+if (code) {
+    try {
+        const response = await fetch(`/api/index.php/index/find_invite_by_code?code=${code}`);
+        const data = await response.json();
+        inviteData = data.data;
+        console.log(inviteData);
+    } catch {
+        //  window.location.hash = '#home';
+    }
+} else {
+    window.location.hash = '#home';
+}
+
 const Section1 = () => {
     return (
         <section className="relative w-full h-full max-h-[650px] bg-gradient-to-b from-[#9C370B] to-[#BF5F35] p-10">
@@ -9,13 +30,15 @@ const Section1 = () => {
             <div className="absolute bottom-0 left-0 w-full h-[82px] bg-gradient-to-t from-[#E68A66] to-transparent"></div>
             
             <div className="absolute inset-0 z-100 flex flex-col items-center space-y-3 z-[1] pt-10 space-y-4 h-full">
-                <p className="eb-garamond text-[35px] text-[#FFD365] font-bold underline decoration-white decoration-1 underline-offset-10 decoration-dashed">M.Jores</p>
+                <p className="eb-garamond text-[35px] text-[#FFD365] font-bold underline decoration-white decoration-1 underline-offset-10 decoration-dashed">{inviteData?.invite}</p>
                 <p className="eb-garamond text-[20px] text-white">Vous êtes conviés au mariage de</p>
                 <p className="playfair-display font-bold text-[30px] text-white">Kristel & Frank</p>
                 <div className="flex flex-col items-center space-y-3 bg-gradient-to-b from-[#ad4a21] to-[#d07c5b] p-2 mt-auto pb-10 rounded-t-xl">
                     <p className="eb-garamond max-w-30 text-white text-center">Cliquez  pour découvrir notre histoire d’amour et d’autres détails </p>
-                    <img src="./assets/images/home/ici.png" className="w-30" />
-                    <p className="pt-4 text-white eb-garamond">TABLE <br/> <span className="text-black font-bold">ROME</span></p>
+                    <a href="/">
+                        <img src="./assets/images/home/ici.png" className="w-30" />
+                    </a>
+                    <p className="pt-4 text-white eb-garamond text-center ">TABLE <br/> <span className="text-black font-bold">{inviteData?.table}</span></p>
                 </div>
             </div>            
         </section>
@@ -23,18 +46,8 @@ const Section1 = () => {
 }
 
 const Section2 = () => {
-    const getQrCodeFromUrl = () => {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('code');
-    };
 
     const qrData = getQrCodeFromUrl();
-
-    React.useEffect(() => {
-        if (!qrData) {
-            window.location.href = 'https://kris-frank2025.free.nf';
-        }
-    }, [qrData]);
 
     const handleQrDownload = () => {
         const canvas = document.createElement('canvas');
@@ -130,11 +143,17 @@ const Section3 = () => {
                     <p className="eb-garamond font-bold text-[20px] md:text-[24px] text-black max-w-xl leading-snug">
                         Découvrez notre filtre snap et accompagnez nous dans cette aventure
                     </p>
-                    <img
-                        src="assets/images/home/snapchat-filter.png"
-                        alt="Filtre Snapchat du mariage"
-                        className="w-32 h-32 md:w-40 md:h-40 object-contain my-[-7px]"
-                    />
+                    <a
+                        href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=628fbacc44394620a5cc0164b05624fb&metadata=01"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <img
+                            src="assets/images/home/snapchat-filter.png"
+                            alt="Filtre Snapchat du mariage"
+                            className="w-32 h-32 md:w-40 md:h-40 object-contain my-[-7px]"
+                        />
+                    </a>
                 </div>
             </div>
         </section>
@@ -186,9 +205,25 @@ const Wedding = ()=>{
         <>
             {style()}
             <div className="md:hidden">
-                <Section1 />
-                <Section2 />
-                <Section3 />
+                {inviteData === undefined ? (
+                    <div className="flex flex-col items-center justify-center min-h-screen bg-white px-6">
+                        <p className="eb-garamond text-[28px] text-[#B45B37] font-bold mb-6 text-center">
+                            Le lien d'invitation n'est pas correct ou a expiré.
+                        </p>
+                        <button
+                            className="bg-[#B45B37] text-white eb-garamond text-[18px] px-8 py-3 rounded-md shadow-lg font-bold"
+                            onClick={() => (window.location.href = '/')}
+                        >
+                            Revenir à l'accueil
+                        </button>
+                    </div>
+                ) : (
+                    <>
+                        <Section1 />
+                        <Section2 />
+                        <Section3 />
+                    </>
+                )}
             </div>
             <div className="hidden md:flex items-center justify-center py-10 h-screen">
                 <p className="playfair-display text-[18px] text-gray-800 text-center max-w-md font-bold">

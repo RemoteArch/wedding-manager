@@ -32,18 +32,20 @@ const Section1 = () => {
         days: 0,
         hours: 0,
         minutes: 0,
+        seconds: 0,
     });
 
     useEffect(() => {
         const compute = () => {
             const now = new Date();
             const diffMs = Math.max(0, targetDate.getTime() - now.getTime());
-            const totalMinutes = Math.floor(diffMs / (1000 * 60));
-            const days = Math.floor(totalMinutes / (60 * 24));
-            const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
-            const minutes = totalMinutes % 60;
+            const totalSeconds = Math.floor(diffMs / 1000);
+            const days = Math.floor(totalSeconds / (60 * 60 * 24));
+            const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+            const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+            const seconds = totalSeconds % 60;
 
-            setRemaining({ days, hours, minutes });
+            setRemaining({ days, hours, minutes, seconds });
         };
 
         compute();
@@ -63,14 +65,15 @@ const Section1 = () => {
                 </h1>
 
                 <div className="w-full mt-10 rounded-[20px] border-[#5B2A16] p-6 border-t-[2px] border-b-[2px] wedding-serif text-[#5B2A16] text-center text-[30px] font-semibold">
-                        27–28 Fevrier 2026
+                    27–28 Fevrier 2026
                 </div>
 
-                <div className="w-full grid grid-cols-3 gap-5 mt-10">
+                <div className="w-full grid grid-cols-4 gap-5 mt-10">
                     {[
                         { value: remaining.days, label: 'jours' },
                         { value: remaining.hours, label: 'heures' },
                         { value: remaining.minutes, label: 'minutes' },
+                        { value: remaining.seconds, label: 'secondes' },
                     ].map((item, index) => (
                         <div key={index} className="rounded-[20px] bg-[#fef3ed] border-[2px] border-[#E2C7BC] py-3 flex flex-col items-center justify-center">
                             <p className="wedding-serif text-[#7A1F1B] text-[44px] font-semibold leading-none mb-3">
@@ -289,7 +292,7 @@ const Section6 = ()=>{
             time: 'A 14H00',
             title: 'BÉNÉDICTION',
             subtitle: 'NUPTIALE',
-            locationLabel: 'EEC Paroisse de Ndognpassi 3',
+            locationLabel: 'EEC Paroisse de Ndogpassi 3',
             mapImageSrc: './assets/images/site/location.png',
         },
         {
@@ -462,7 +465,7 @@ const Section7 = ()=>{
                     </h2>
 
                     <div className="w-full mt-10 flex flex-col gap-10">
-                        <div className="w-full rounded-[14px] overflow-hidden bg-white">
+                        <div className="w-full overflow-hidden bg-white">
                             <img
                                 src={images[0].src}
                                 alt={images[0].alt}
@@ -470,7 +473,7 @@ const Section7 = ()=>{
                             />
                         </div>
 
-                        <div className="w-full rounded-[14px] overflow-hidden bg-white">
+                        <div className="w-full overflow-hidden bg-white">
                             <img
                                 src={images[1].src}
                                 alt={images[1].alt}
@@ -483,7 +486,7 @@ const Section7 = ()=>{
                                 " CHAQUE HISTOIRE D'AMOUR COMMENCE PAR UN REGARD ET SE TISSE DANS LES SILENCES PARTAGÉS "
                             </p>
                         </div>
-                        <div className="w-full rounded-[14px] overflow-hidden bg-white">
+                        <div className="w-full overflow-hidden bg-white">
                             <img
                                 src={images[2].src}
                                 alt={images[2].alt}
@@ -491,7 +494,7 @@ const Section7 = ()=>{
                             />
                         </div>
 
-                        <div className="w-full rounded-[14px] overflow-hidden bg-white">
+                        <div className="w-full  overflow-hidden bg-white">
                             <img
                                 src={images[3].src}
                                 alt={images[3].alt}
@@ -499,7 +502,7 @@ const Section7 = ()=>{
                             />
                         </div>
 
-                        <div className="w-full rounded-[14px] overflow-hidden bg-white">
+                        <div className="w-full overflow-hidden bg-white">
                             <img
                                 src={images[4].src}
                                 alt={images[4].alt}
