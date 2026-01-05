@@ -65,7 +65,7 @@ const updatePageMetadata = (href, title = 'Kristel & Frank - Mariage') => {
 
 updatePageMetadata('./assets/images/initial.png');
 
-const API_URL = "https://kris-frank2025.free.nf/api/index.php/index/all_invitations";
+const API_URL = "/api/index.php/index/all_invitations";
 
 const fetchGuestList = async () => {
     try {
@@ -75,7 +75,8 @@ const fetchGuestList = async () => {
             return result.data.map(item => ({
                 nom: item.invite,
                 table: item.table,
-                code: item.invite_code
+                code: item.invite_code,
+                status: item.status
             }));
         }
         return [];
@@ -100,19 +101,41 @@ const ScanPanel = () => {
   const [scanResult, setScanResult] = useState(null);
   const [accessDenied, setAccessDenied] = useState(false);
   
-  useEffect(() => {
+  const loadQuestList = ()=>{
       fetchGuestList().then(guests => {
           guestList.current = guests;
       });
+  }
+
+  useEffect(() => {
+     loadQuestList()
   }, []);
 
-  const handleQrDetected = (qrValue) => {
+  const handleQrDetected = async (qrValue) => {
     const guest = guestList.current.find(g => g.code == qrValue);
-    // console.log("QR Value:", qrValue, "Guest:", guest, "All guests:", guestList.current);
     
     if (guest) {
       setScanResult(guest);
       setAccessDenied(false);
+      
+      if (guest.status !== 'scanned') {
+        try {
+          await fetch('/api/index.php/index/update_invitation_status', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              code: qrValue,
+              status: 'scanned'
+            }),
+          });
+        } catch (error) {
+          console.error('Error updating invitation status:', error);
+        }
+        loadQuestList();
+      }
+      
       setTimeout(() => {
         setScanResult(null);
       }, 5000);
@@ -169,7 +192,7 @@ const ScanPanel = () => {
               {scanResult ? (
                 <div className="bg-white rounded-[22px] px-8 py-12 shadow-2xl text-center max-w-md w-full">
                   <p className="text-[32px] font-bold mb-8 playfair-display italic underline">
-                    ACCÈS AUTORISÉ !!
+                    {scanResult.status === 'scanned' ? "DÉJÀ SCANNÉ" : "ACCÈS AUTORISÉ !!"}
                   </p>
                   <p className="text-[#8B0000] text-[36px] font-semibold mb-6 playfair-display">
                     {scanResult.nom}
@@ -177,6 +200,11 @@ const ScanPanel = () => {
                   <p className="text-[#B8A07A] text-[24px] font-semibold playfair-display uppercase">
                     TABLE {scanResult.table}
                   </p>
+                  {scanResult.status === 'scanned' && (
+                    <p className="text-[#FF6B6B] text-[18px] font-semibold mt-6 eb-garamond">
+                      Cet invité a déjà été scanné
+                    </p>
+                  )}
                 </div>
               ) : accessDenied ? (
                 <div className="bg-white rounded-[22px] px-8 py-12 shadow-2xl text-center max-w-md w-full">

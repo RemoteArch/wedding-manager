@@ -93,10 +93,16 @@ const Section1 = () => {
 const Section2 = () => {
     const items = [
         {
+            img: "./assets/images/site/dot.png",
+            title: "DOT",
+            title2:"CÉRÉMONIE TRADITIONNELLE",
+            subtitle: "Domicile de la Mariée",
+        },
+        {
             img: "./assets/images/site/etat-civil.png",
             title: "MAIRIE",
             title2:"ETAT CIVIL",
-            subtitle: "Centre d’état civil de Logbaba",
+            subtitle: "Centre d'état civil de Logbaba",
         },
         {
             img: "./assets/images/site/bene-nuptiale.png",
@@ -173,7 +179,10 @@ const Section3 = () => {
     );
 }
 
-const Section4 = ()=>{
+const Section4 = () => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const fullText = "En Août 2023 quand il m'a écrit pour la première fois, mon instinct de femme m'a dit qu'il serait mon mari j'en ai rit et j'ai rejeté sa première demande par après. Mais je veux avouer que le Seigneur m'a piégée et d'une façon vraiment qui me dépasse jusqu'à ce jour. Nos regards n'ont pas connu de croisades spéciales (en mode coup de foudre) non, mais je continue d'être convaincu que Dieu fait toute chose belles en son temps. Et l'heure est venue pour nous de matérialiser cette union par une alliance visible par vos yeux. Il s'agit de 2 ans de cheminement, d'accompagnement, d'encadrement, de prières, de sacrifice, de pause, de pardon, mais surtout d'une décision de s'aimer d'un amour renouvellé par le Saint Esprit chaque jour. Frank c'est ma Promesse, en toi chéri, je réalise encore combien la fidélité de Dieu est Grande. Je prie pour être chaque jour ton miracle le plus beau et encore mieux ton aide précieuse que tu ne trouveras chez personne d'autre. Je me rappelle de cette époque où je priais pour mon futur mari alors que je n'envisageais même pas une relation cette époque-là... Let us trust the process my love, certainement le Seigneur n'a pas fini de nous surprendre ✨";
+    const shortText = fullText.substring(0, 200) + "...";
 
     return (
         <section className="w-full py-10">
@@ -203,22 +212,25 @@ const Section4 = ()=>{
                     </p>
 
                     <p className="wedding-serif text-black/60 text-[16px] leading-relaxed mt-6 max-w-[360px]">
-                        Notre rencontre n’a jamais été un hasard. Je crois profondément que Dieu a guidé
-                        chacun de mes pas vers toi. Dans ton regard, j’ai trouvé la paix, la douceur et
-                        l’amour que seul le Seigneur peut inspirer. Tu es pour moi une preuve vivante de
-                        Sa fidélité. Merci d’être cet homme attentionné, sincère et humble qui a Dieu au
-                        centre de tout.
-                        <br />
-                        Aujourd’hui, je suis prête à te redire ‘oui’, avec un cœur rempli de foi, de
-                        reconnaissance et d’amour.
+                        {isExpanded ? fullText : shortText}
                     </p>
+                    
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="wedding-serif text-[#B45B37] text-[14px] mt-4 underline hover:text-[#8B4513] transition-colors"
+                    >
+                        {isExpanded ? "Voir moins" : "Voir plus"}
+                    </button>
                 </div>
             </div>
         </section>
     );
 }
 
-const Section5 = ()=>{
+const Section5 = () => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const fullText = "Il y a des histoires d'amour qui naissent d'un regard, et d'autres qui prennent vie à travers une voix. La nôtre a commencé ainsi, au bout du fil, entre deux villes, portée par des mots sincères et des silences remplis d'émotion. Ce qui n'était au départ qu'un simple échange s'est transformé, jour après jour, en une douce habitude. Les appels se sont allongés, les rires ont traversé la distance, et sans même nous être encore rencontrés, nos cœurs s'étaient déjà reconnus. Kristel est devenue mon refuge, mon éclat de rire, mon aujourd'hui et mon demain. À ses côtés, l'amour a pris la forme de la confiance, du respect, et de ce bonheur simple qui réchauffe l'âme.";
+    const shortText = fullText.substring(0, 200) + "...";
 
     return (
         <section className="w-full py-10">
@@ -248,15 +260,15 @@ const Section5 = ()=>{
                     </p>
 
                     <p className="wedding-serif text-black/60 text-[16px] leading-relaxed mt-6 max-w-[360px]">
-                        Lorsque nos chemins se sont croisés, j’ai compris que Dieu venait d’écrire une
-                        nouvelle page de ma vie. À travers toi, j’ai découvert une femme de foi, de grâce
-                        et de lumière. Ton amour m’inspire, ta prière me porte et ta présence me rapproche
-                        chaque jour un peu plus de ce que Dieu veut pour moi. Merci d’être cette femme
-                        vertueuse, forte et douce que le Seigneur a placée à mes côtés.
-                        <br />
-                        Aujourd’hui, c’est avec gratitude, paix et conviction que je te dis ‘oui’, guidé
-                        par Dieu et par l’amour.
+                        {isExpanded ? fullText : shortText}
                     </p>
+                    
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="wedding-serif text-[#B45B37] text-[14px] mt-4 underline hover:text-[#8B4513] transition-colors"
+                    >
+                        {isExpanded ? "Voir moins" : "Voir plus"}
+                    </button>
                 </div>
             </div>
         </section>
@@ -273,7 +285,7 @@ const Section6 = ()=>{
             title: 'CÉRÉMONIE',
             subtitle: 'TRADITIONNELLE',
             locationLabel: 'Domicile de la Mariée',
-            mapImageSrc: './assets/images/site/location.png',
+            mapEmbedSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.0607693793312!2d9.75601808278012!3d4.037035756705238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10610dbf176dc78d%3A0x97c77b35fdbc5772!2sMairie%20de%20Douala%203%C3%A8me!5e1!3m2!1sfr!2scm!4v1767631405203!5m2!1sfr!2scm',
         },
         {
             day: '28',
@@ -283,7 +295,7 @@ const Section6 = ()=>{
             title: 'ETAT CIVIL',
             subtitle: '',
             locationLabel: 'Centre d\u2019état civil de Logbaba',
-            mapImageSrc: './assets/images/site/location.png',
+            mapEmbedSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.0607693793312!2d9.75601808278012!3d4.037035756705238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10610dbf176dc78d%3A0x97c77b35fdbc5772!2sMairie%20de%20Douala%203%C3%A8me!5e1!3m2!1sfr!2scm!4v1767631405203!5m2!1sfr!2scm',
         },
         {
             day: '28',
@@ -293,7 +305,7 @@ const Section6 = ()=>{
             title: 'BÉNÉDICTION',
             subtitle: 'NUPTIALE',
             locationLabel: 'EEC Paroisse de Ndogpassi 3',
-            mapImageSrc: './assets/images/site/location.png',
+            mapEmbedSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d371.7665445521341!2d9.757244322023276!3d4.007738001234047!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x106173f2947ad993%3A0xc47a5c949a9f61be!2sEEC%20NDOG-PASSI%203!5e1!3m2!1sfr!2scm!4v1767632185377!5m2!1sfr!2scm',
         },
         {
             day: '28',
@@ -303,7 +315,7 @@ const Section6 = ()=>{
             title: 'RÉCEPTION',
             subtitle: '',
             locationLabel: 'Salle de fête de Cplan',
-            mapImageSrc: './assets/images/site/location.png',
+            mapEmbedSrc: 'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d350.895570372076!2d9.769305685565083!3d4.020214778152877!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sfr!2scm!4v1767632328116!5m2!1sfr!2scm',
         },
     ];
 
@@ -315,7 +327,7 @@ const Section6 = ()=>{
         title,
         subtitle,
         locationLabel,
-        mapImageSrc,
+        mapEmbedSrc,
     }) => {
         return (
             <div className="w-full rounded-xl bg-white overflow-hidden px-6 pt-7 pb-5 space-y-5">
@@ -409,13 +421,20 @@ const Section6 = ()=>{
                     </div>
                 </div>
 
-                <div className="w-full rounded-xl overflow-hidden">
-                    <img
-                        src={mapImageSrc}
-                        alt="Map"
-                        className="w-full h-[140px] object-cover"
-                    />
-                </div>
+                {mapEmbedSrc && (
+                    <div className="w-full rounded-xl overflow-hidden">
+                        <iframe
+                            src={mapEmbedSrc}
+                            width="100%"
+                            height="140"
+                            style={{ border: 0 }}
+                            allowFullScreen=""
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            title="Map"
+                        />
+                    </div>
+                )}
             </div>
         );
     };
@@ -516,46 +535,73 @@ const Section7 = ()=>{
     );
 }
 
-const Section8 = ()=>{
+const Section8 = () => {
     const [name, setName] = useState('');
     const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState([
-        {
-            id: '1',
-            name: 'Cassandra',
-            message: 'Jolie couple ',
-        },
-        {
-            id: '2',
-            name: 'Jean',
-            message: 'Que Dieu bénisse votre union.',
-        },
-        {
-            id: '3',
-            name: 'Marie',
-            message: 'Félicitations aux mariés!',
-        },
-    ]);
+    const [messages, setMessages] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const onSubmit = (e) => {
+    useEffect(() => {
+        fetchMessages();
+    }, []);
+
+    const fetchMessages = async () => {
+        try {
+            const response = await fetch('/api/index.php/index/read_voueux');
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success && Array.isArray(result.data)) {
+                    setMessages(result.data);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+        }
+    };
+
+    const onSubmit = async (e) => {
         e.preventDefault();
         const trimmedName = name.trim();
         const trimmedMessage = message.trim();
         if (!trimmedName || !trimmedMessage) return;
 
-        setMessages((prev) => [
-            {
-                id: String(Date.now()),
-                name: trimmedName,
-                message: trimmedMessage,
-            },
-            ...prev,
-        ]);
-        setName('');
-        setMessage('');
+        setLoading(true);
+        try {
+            const response = await fetch('/api/index.php/index/save_voueux', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: trimmedName,
+                    message: trimmedMessage,
+                }),
+            });
+
+            if (response.ok) {
+                setName('');
+                setMessage('');
+                await fetchMessages();
+            }
+        } catch (error) {
+            console.error('Error submitting message:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const MessageCard = ({ name: author, message: body }) => {
+    const MessageCard = ({ name: author, message: body, date }) => {
+        const formatDate = (dateString) => {
+            if (!dateString) return '';
+            const d = new Date(dateString);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            return `${day}/${month}/${year} à ${hours}:${minutes}`;
+        };
+
         return (
             <div className="relative w-full rounded-[14px] bg-white border border-black/10 px-4 py-4 overflow-hidden">
                 <img
@@ -564,23 +610,33 @@ const Section8 = ()=>{
                     className="absolute -top-10 -right-10 w-[120px] opacity-20 pointer-events-none select-none"
                 />
                 <div className="relative flex items-start gap-3">
-                    <div className="w-[28px] h-[28px] rounded-full bg-[#7A1F1B]/10 flex items-center justify-center">
-                        <div className="w-[10px] h-[10px] rounded-full bg-[#7A1F1B]" />
+                    <div className="w-[28px] h-[28px] rounded-full bg-[#7A1F1B]/10 flex items-center justify-center flex-shrink-0">
+                        <span className="wedding-serif text-[#7A1F1B] text-[12px] font-semibold">
+                            {author.charAt(0).toUpperCase()}
+                        </span>
                     </div>
                     <div className="flex-1">
-                        <p className="wedding-serif text-[#7A1F1B] text-[14px] font-semibold">
-                            {author}
-                        </p>
-                        <p className="wedding-serif text-black/80 text-[14px] mt-1">
+                        <div className="flex items-center justify-between gap-2">
+                            <p className="wedding-serif text-[#7A1F1B] text-[14px] font-semibold">
+                                {author}
+                            </p>
+                        </div>
+                        
+                        <p className="wedding-serif text-black/80 text-[14px] mt-1 truncate">
                             {body}
                         </p>
+
+                        {date && (
+                            <p className="wedding-serif text-black/50 text-[12px] whitespace-nowrap text-right">
+                                {formatDate(date)}
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>
         );
     };
 
-    // Duplicate messages for seamless loop
     const duplicatedMessages = [...messages, ...messages];
 
     return (
@@ -603,7 +659,8 @@ const Section8 = ()=>{
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder="* Votre nom"
-                                    className="w-full h-[44px] rounded-[10px] bg-white border border-black/10 px-4 wedding-serif text-[14px] outline-none focus:border-[#5B2A16]/40 transition-colors"
+                                    disabled={loading}
+                                    className="w-full h-[44px] rounded-[10px] bg-white border border-black/10 px-4 wedding-serif text-[14px] outline-none focus:border-[#5B2A16]/40 transition-colors disabled:opacity-50"
                                 />
                             </div>
 
@@ -613,43 +670,47 @@ const Section8 = ()=>{
                                     onChange={(e) => setMessage(e.target.value)}
                                     placeholder="* Tapez le message"
                                     rows={3}
-                                    className="w-full h-[150px] rounded-[10px] bg-white border border-black/10 px-4 py-3 wedding-serif text-[14px] outline-none resize-none focus:border-[#5B2A16]/40 transition-colors"
+                                    disabled={loading}
+                                    className="w-full h-[150px] rounded-[10px] bg-white border border-black/10 px-4 py-3 wedding-serif text-[14px] outline-none resize-none focus:border-[#5B2A16]/40 transition-colors disabled:opacity-50"
                                 />
                             </div>
 
-                            <div className="w-full flex justify-center -mt-7">
+                            <div className="w-full flex justify-center -mt-9">
                                 <button
                                     type="submit"
-                                    className="py-2 px-6 rounded-[10px] bg-[#5B2A16] text-white wedding-serif text-[14px] tracking-[0.06em] hover:bg-[#4a2312] transition-colors max-w-[300px]"
+                                    disabled={loading}
+                                    className="w-[70%] py-3 rounded-[10px] bg-[#5B2A16] text-white wedding-serif text-[14px] tracking-[0.06em] hover:bg-[#4a2312] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    Envoyez le message
+                                    {loading ? 'Envoi...' : 'Envoyez le message'}
                                 </button>
                             </div>
                         </div>
                     </form>
 
-                    <div className="w-full mt-8 overflow-hidden">
-                        <style>{`
-                            @keyframes marquee {
-                                0% { transform: translateX(0); }
-                                100% { transform: translateX(-50%); }
-                            }
-                            .marquee-container {
-                                display: flex;
-                                animation: marquee 20s linear infinite;
-                            }
-                            .marquee-container:hover {
-                                animation-play-state: paused;
-                            }
-                        `}</style>
-                        <div className="marquee-container">
-                            {duplicatedMessages.map((m, index) => (
-                                <div key={`${m.id}-${index}`} className="w-[260px] flex-shrink-0 mx-2">
-                                    <MessageCard name={m.name} message={m.message} />
-                                </div>
-                            ))}
+                    {messages.length > 0 && (
+                        <div className="w-full mt-8 overflow-hidden">
+                            <style>{`
+                                @keyframes marquee {
+                                    0% { transform: translateX(0); }
+                                    100% { transform: translateX(-50%); }
+                                }
+                                .marquee-container {
+                                    display: flex;
+                                    animation: marquee 20s linear infinite;
+                                }
+                                .marquee-container:hover {
+                                    animation-play-state: paused;
+                                }
+                            `}</style>
+                            <div className="marquee-container">
+                                {duplicatedMessages.map((m, index) => (
+                                    <div key={`${m.nom}-${m.date}-${index}`} className="w-[260px] flex-shrink-0 mx-2">
+                                        <MessageCard name={m.nom} message={m.message} date={m.date} />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </section>
@@ -660,7 +721,7 @@ const Footer = ()=>{
     const ContactRow = ({ icon, text }) => {
         return (
             <div className="flex items-start gap-3">
-                <div className="w-[34px] h-[34px] rounded-[10px] bg-black flex items-center justify-center">
+                <div className="w-[34px] h-[34px] rounded-full bg-black flex items-center justify-center">
                     {icon}
                 </div>
                 <p className="wedding-serif text-white/80 text-[14px] leading-tight mt-[6px]">
@@ -675,27 +736,26 @@ const Footer = ()=>{
             <div className="w-full max-w-[520px] mx-auto px-6 py-12">
                 <div className="w-full">
                     <div className="flex items-center gap-3">
-                        <div className="w-[36px] h-[36px] rounded-full bg-[#4c3470] flex items-center justify-center">
-                            <p className="wedding-serif text-white text-[16px] font-semibold">D</p>
-                        </div>
-                        <p className="wedding-serif text-white text-[22px] font-bold">
-                            Danma
-                        </p>
+                        <img 
+                            src="./assets/images/site/logo-danma.png" 
+                            alt="Danma Logo" 
+                            className="h-[36px] w-auto"
+                        />
                     </div>
 
                     <div className="mt-6 space-y-2">
                         <p className="wedding-serif text-white/90 text-[14px] leading-relaxed">
-                            Vous préparez un mariage ou un événement special ?
+                            🌸 Vous préparez un mariage ou un événement spécial ?
                         </p>
                         <p className="wedding-serif text-white/80 text-[14px] leading-relaxed">
-                            Offrez à vos invités une expérience unique grâce à un site vitrine personnalisée, un
-                            système d’invitation moderne avec billet digital, QR code, galerie photo…
+                            Offrez à vos invités une expérience unique grâce à un site vitrine personnalisé, un
+                            système d'invitation moderne avec billet digital, QR code, galerie photo…
                         </p>
                         <p className="wedding-serif text-white/80 text-[14px] leading-relaxed">
-                            Élégant, pratique et mémorable.
+                            ✨ Élégant, pratique et mémorable.
                         </p>
                         <p className="wedding-serif text-white/80 text-[14px] leading-relaxed">
-                            Contactez-nous pour créer le vôtre sur mesure.
+                            💌 Contactez-nous pour créer le vôtre sur mesure.
                         </p>
                     </div>
 
@@ -753,7 +813,7 @@ const Footer = ()=>{
 
                     <div className="mt-10 pt-6 border-t border-white/10">
                         <p className="wedding-serif text-white/70 text-[12px]">
-                            Copyright  Danma. All rights reserved.
+                            Copyright © Danma. All rights reserved.
                         </p>
                     </div>
                 </div>

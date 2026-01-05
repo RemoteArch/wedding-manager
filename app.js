@@ -182,7 +182,7 @@ function App() {
   const [url, setUrl] = React.useState(null);
   useEffect(() => {
     if (!name) return;
-    setUrl(`./components/${name.toLowerCase()}.jsx?t=${Date.now()}`);
+    setUrl(`./components/${name.toLowerCase()}.jsx`);
   }, [name]);
   function getComponentNameFromHash() {
     let hash = window.location.hash.replace('#', '') || 'Home';
