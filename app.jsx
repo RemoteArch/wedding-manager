@@ -202,7 +202,7 @@ function App() {
   
   useEffect(() => {
     if(!name) return;
-    setUrl(`./components/${name.toLowerCase()}.jsx`);
+    setUrl(`./components/${name.toLowerCase()}.jsx?t=${Date.now()}`);
   }, [name]);
 
   function getComponentNameFromHash() {

@@ -65,41 +65,28 @@ const updatePageMetadata = (href, title = 'Kristel & Frank - Mariage') => {
 
 updatePageMetadata('./assets/images/initial.png');
 
-const guestListExample = [
-    {
-        nom: "Johan Kabo",
-        telephone: "+237690123456",
-        code: "QR001",
-        table: "ROME"
-    },
-    {
-        nom: "Fotso Jean",
-        telephone: "+237691234567",
-        code: "QR002",
-        table: "PARIS"
-    },
-    {
-        nom: "Mbarga Sophie",
-        telephone: "+237692345678",
-        code: "QR003",
-        table: "LONDRES"
-    },
-    {
-        nom: "Tchoua Pierre",
-        telephone: "+237693456789",
-        code: "QR004",
-        table: "ROME"
-    },
-    {
-        nom: "Kamga Claire",
-        telephone: "+237694567890",
-        code: "QR005",
-        table: "MADRID"
+const API_URL = "https://kris-frank2025.free.nf/api/index.php/index/all_invitations";
+
+const fetchGuestList = async () => {
+    try {
+        const response = await fetch(API_URL);
+        const result = await response.json();
+        if (result.success && Array.isArray(result.data)) {
+            return result.data.map(item => ({
+                nom: item.invite,
+                table: item.table,
+                code: item.invite_code
+            }));
+        }
+        return [];
+    } catch (error) {
+        console.error("Erreur lors de la récupération des invités:", error);
+        return [];
     }
-];
+};
 
 
-const ScanPanel = ({ guestList=guestListExample }) => {
+const ScanPanel = ({ guestList = [] }) => {
   const qrSrc = "./assets/images/scan/qr.png";
   const title = "Instants du mariage";
   const subtitle = "Scannez pour découvrir tous les\ninstants capturés de l'évènement";
@@ -108,11 +95,19 @@ const ScanPanel = ({ guestList=guestListExample }) => {
   const adviceText = "Présentez votre QR Code sur\nla camera de l'écran pour le\nvérifier.";
   const adviceImageSrc = "./assets/images/scan/scan-advice.png";
 
+  
   const [scanResult, setScanResult] = useState(null);
   const [accessDenied, setAccessDenied] = useState(false);
+  
+  useEffect(() => {
+      fetchGuestList().then(guests => {
+          guestList = guests;
+      });
+  }, []);
 
   const handleQrDetected = (qrValue) => {
-    const guest = guestList.find(g => g.code === qrValue);
+    const guest = guestList.find(g => g.code == qrValue);
+    // console.log("QR Value:", qrValue, "Guest:", guest, "All guests:", guestList);
     
     if (guest) {
       setScanResult(guest);

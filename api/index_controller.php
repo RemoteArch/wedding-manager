@@ -19,6 +19,15 @@ function find_invite_by_code($params) {
     throw new Exception("Aucune invitation trouvée pour ce code");
 }
 
-function test() {
-    return "test";
+function all_invitations($params){
+    $path = __DIR__ . '/../data/inviter_with_codes.json';
+    $content = file_get_contents($path);
+    if ($content === false) {
+        throw new Exception("Fichier des invités introuvable");
+    }
+    $entries = json_decode($content, true);
+    if (!is_array($entries)) {
+        throw new Exception("Le format du fichier des invités est invalide");
+    }
+    return $entries;
 }
