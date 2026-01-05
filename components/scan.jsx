@@ -86,7 +86,7 @@ const fetchGuestList = async () => {
 };
 
 
-const ScanPanel = ({ guestList = [] }) => {
+const ScanPanel = () => {
   const qrSrc = "./assets/images/scan/qr.png";
   const title = "Instants du mariage";
   const subtitle = "Scannez pour découvrir tous les\ninstants capturés de l'évènement";
@@ -94,20 +94,21 @@ const ScanPanel = ({ guestList = [] }) => {
   const adviceTitle = "Conseil";
   const adviceText = "Présentez votre QR Code sur\nla camera de l'écran pour le\nvérifier.";
   const adviceImageSrc = "./assets/images/scan/scan-advice.png";
-
+  const guestList = useRef([]);
+  
   
   const [scanResult, setScanResult] = useState(null);
   const [accessDenied, setAccessDenied] = useState(false);
   
   useEffect(() => {
       fetchGuestList().then(guests => {
-          guestList = guests;
+          guestList.current = guests;
       });
   }, []);
 
   const handleQrDetected = (qrValue) => {
-    const guest = guestList.find(g => g.code == qrValue);
-    // console.log("QR Value:", qrValue, "Guest:", guest, "All guests:", guestList);
+    const guest = guestList.current.find(g => g.code == qrValue);
+    // console.log("QR Value:", qrValue, "Guest:", guest, "All guests:", guestList.current);
     
     if (guest) {
       setScanResult(guest);
