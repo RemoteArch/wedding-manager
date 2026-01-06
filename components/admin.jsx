@@ -340,7 +340,7 @@ const Dashboard = ({ onLogout }) => {
                                         <th className="text-center px-5 py-4 text-[13px] font-semibold text-gray-600 uppercase tracking-wider">Table</th>
                                         <th className="text-center px-5 py-4 text-[13px] font-semibold text-gray-600 uppercase tracking-wider">Catégorie</th>
                                         <th className="text-center px-5 py-4 text-[13px] font-semibold text-gray-600 uppercase tracking-wider">Statut</th>
-                                        <th className="text-center px-5 py-4 text-[13px] font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+                                        <th className="text-center px-5 py-4 text-[13px] font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
@@ -395,24 +395,38 @@ const Dashboard = ({ onLogout }) => {
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="px-5 py-4 text-center">
-                                                {inv.status === 'scanned' ? (
+                                            <td className="px-5 py-4">
+                                                <div className="flex items-center justify-center gap-2">
                                                     <button
-                                                        onClick={() => updateStatus(inv.invite_code, '')}
-                                                        disabled={updatingCode === inv.invite_code}
-                                                        className="px-4 py-2 rounded-[8px] bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors text-[13px] font-medium disabled:opacity-50"
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText(`https://kris-frank2025.free.nf/?code=${inv.invite_code}`);
+                                                        }}
+                                                        className="px-3 py-2 rounded-[8px] bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors text-[13px] font-medium"
+                                                        title="Copier le lien"
                                                     >
-                                                        {updatingCode === inv.invite_code ? 'Mise à jour...' : 'Réinitialiser'}
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                                                        </svg>
                                                     </button>
-                                                ) : (
-                                                    <button
-                                                        onClick={() => updateStatus(inv.invite_code, 'scanned')}
-                                                        disabled={updatingCode === inv.invite_code}
-                                                        className="px-4 py-2 rounded-[8px] bg-[#5B2A16] text-white hover:bg-[#4a2312] transition-colors text-[13px] font-medium disabled:opacity-50"
-                                                    >
-                                                        {updatingCode === inv.invite_code ? 'Mise à jour...' : 'Marquer scanné'}
-                                                    </button>
-                                                )}
+                                                    {inv.status === 'scanned' ? (
+                                                        <button
+                                                            onClick={() => updateStatus(inv.invite_code, '')}
+                                                            disabled={updatingCode === inv.invite_code}
+                                                            className="px-4 py-2 rounded-[8px] bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors text-[13px] font-medium disabled:opacity-50"
+                                                        >
+                                                            {updatingCode === inv.invite_code ? 'Mise à jour...' : 'Réinitialiser'}
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => updateStatus(inv.invite_code, 'scanned')}
+                                                            disabled={updatingCode === inv.invite_code}
+                                                            className="px-4 py-2 rounded-[8px] bg-[#5B2A16] text-white hover:bg-[#4a2312] transition-colors text-[13px] font-medium disabled:opacity-50"
+                                                        >
+                                                            {updatingCode === inv.invite_code ? 'Mise à jour...' : 'Marquer scanné'}
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
