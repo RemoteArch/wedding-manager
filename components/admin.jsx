@@ -113,6 +113,7 @@ const Dashboard = ({ onLogout }) => {
     const [filterStatus, setFilterStatus] = useState('all');
     const [filterTable, setFilterTable] = useState('all');
     const [updatingCode, setUpdatingCode] = useState(null);
+    const [copiedCode, setCopiedCode] = useState(null);
 
     useEffect(() => {
         fetchInvitations();
@@ -399,15 +400,23 @@ const Dashboard = ({ onLogout }) => {
                                                 <div className="flex items-center justify-center gap-2">
                                                     <button
                                                         onClick={() => {
-                                                            navigator.clipboard.writeText(`https://kris-frank2025.free.nf/?code=${inv.invite_code}`);
+                                                            navigator.clipboard.writeText(`https://kris-frank2026.free.nf/?code=${inv.invite_code}`);
+                                                            setCopiedCode(inv.invite_code);
+                                                            setTimeout(() => setCopiedCode(null), 2000);
                                                         }}
                                                         className="px-3 py-2 rounded-[8px] bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors text-[13px] font-medium"
                                                         title="Copier le lien"
                                                     >
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                                                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-                                                        </svg>
+                                                        {copiedCode === inv.invite_code ? (
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <polyline points="20,6 9,17 4,12" />
+                                                            </svg>
+                                                        ) : (
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                                                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                                                            </svg>
+                                                        )}
                                                     </button>
                                                     {inv.status === 'scanned' ? (
                                                         <button

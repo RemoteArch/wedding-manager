@@ -68,7 +68,7 @@ const Section1 = () => {
                     27–28 Fevrier 2026
                 </div>
 
-                <div className="w-full grid grid-cols-4 gap-5 mt-10">
+                <div className="w-full grid grid-cols-4 gap-2 mt-10">
                     {[
                         { value: remaining.days, label: 'jours' },
                         { value: remaining.hours, label: 'heures' },
@@ -76,10 +76,10 @@ const Section1 = () => {
                         { value: remaining.seconds, label: 'secondes' },
                     ].map((item, index) => (
                         <div key={index} className="rounded-[20px] bg-[#fef3ed] border-[2px] border-[#E2C7BC] py-3 flex flex-col items-center justify-center">
-                            <p className="wedding-serif text-[#7A1F1B] text-[44px] font-semibold leading-none mb-3">
+                            <p className="wedding-serif text-[#7A1F1B] text-[36px] font-semibold leading-none mb-2">
                                 {item.value}
                             </p>
-                            <p className="wedding-script text-[#7A1F1B] text-[28px] leading-none font-bold mb-3">
+                            <p className="wedding-script text-[#7A1F1B] text-[22px] leading-none font-bold mb-2">
                                 {item.label}
                             </p>
                         </div>
@@ -181,7 +181,7 @@ const Section3 = () => {
 
 const Section4 = () => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const fullText = "En Août 2023 quand il m'a écrit pour la première fois, mon instinct de femme m'a dit qu'il serait mon mari j'en ai rit et j'ai rejeté sa première demande par après. Mais je veux avouer que le Seigneur m'a piégée et d'une façon vraiment qui me dépasse jusqu'à ce jour. Nos regards n'ont pas connu de croisades spéciales (en mode coup de foudre) non, mais je continue d'être convaincu que Dieu fait toute chose belles en son temps. Et l'heure est venue pour nous de matérialiser cette union par une alliance visible par vos yeux. Il s'agit de 2 ans de cheminement, d'accompagnement, d'encadrement, de prières, de sacrifice, de pause, de pardon, mais surtout d'une décision de s'aimer d'un amour renouvellé par le Saint Esprit chaque jour. Frank c'est ma Promesse, en toi chéri, je réalise encore combien la fidélité de Dieu est Grande. Je prie pour être chaque jour ton miracle le plus beau et encore mieux ton aide précieuse que tu ne trouveras chez personne d'autre. Je me rappelle de cette époque où je priais pour mon futur mari alors que je n'envisageais même pas une relation cette époque-là... Let us trust the process my love, certainement le Seigneur n'a pas fini de nous surprendre ✨";
+    const fullText = "En août 2023, quand il m’a écrit pour la première fois, mon instinct de femme m’a dit qu’il serait mon mari. J’en ai ri et j’ai rejeté sa première demande par la suite. Mais je veux avouer que le Seigneur m’a piégée, et d’une façon qui me dépasse encore jusqu’à ce jour. Nos regards n’ont pas connu de croisades spéciales (en mode coup de foudre), non, mais je continue d’être convaincue que Dieu fait toute chose belle en son temps. Et l’heure est venue pour nous de matérialiser cette union par une alliance visible à vos yeux. Il s’agit de deux ans de cheminement, d’accompagnement, d’encadrement, de prières, de sacrifices, de pauses, de pardon, mais surtout d’une décision de s’aimer d’un amour renouvelé par le Saint-Esprit chaque jour. Frank, c’est ma Promesse. En toi, chéri, je réalise encore combien la fidélité de Dieu est grande. Je prie pour être chaque jour ton plus beau miracle, et mieux encore, ton aide précieuse que tu ne trouveras chez personne d’autre. Je me rappelle de cette époque où je priais pour mon futur mari, alors que je n’envisageais même pas une relation à cette époque-là… Let us trust the process, my love. Certainement, le Seigneur n’a pas fini de nous surprendre ✨";
     const shortText = fullText.substring(0, 200) + "...";
 
     return (
@@ -229,7 +229,7 @@ const Section4 = () => {
 
 const Section5 = () => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const fullText = "Il y a des histoires d'amour qui naissent d'un regard, et d'autres qui prennent vie à travers une voix. La nôtre a commencé ainsi, au bout du fil, entre deux villes, portée par des mots sincères et des silences remplis d'émotion. Ce qui n'était au départ qu'un simple échange s'est transformé, jour après jour, en une douce habitude. Les appels se sont allongés, les rires ont traversé la distance, et sans même nous être encore rencontrés, nos cœurs s'étaient déjà reconnus. Kristel est devenue mon refuge, mon éclat de rire, mon aujourd'hui et mon demain. À ses côtés, l'amour a pris la forme de la confiance, du respect, et de ce bonheur simple qui réchauffe l'âme.";
+    const fullText = "Il y a des histoires d’amour qui naissent d’un regard, et d’autres qui prennent vie à travers une voix. La nôtre a commencé ainsi, au bout du fil, entre deux villes, portée par des mots sincères et des silences remplis d’émotion. Ce qui n’était, au départ, qu’un simple échange s’est transformé, jour après jour, en une douce habitude. Les appels se sont allongés, les rires ont traversé la distance, et sans même nous être encore rencontrés, nos cœurs s’étaient déjà reconnus. Kristel est devenue mon refuge, mon éclat de rire, mon aujourd’hui et mon demain. À ses côtés, l’amour a pris la forme de la confiance, du respect et de ce bonheur simple qui réchauffe l’âme.";
     const shortText = fullText.substring(0, 200) + "...";
 
     return (
@@ -641,7 +641,7 @@ const Section8 = () => {
 
     return (
         <section className="w-full bg-[#efefef] py-12">
-            <div className="w-full max-w-[520px] mx-auto px-6">
+            <div className="w-full max-w-[520px]">
                 <div className="w-full flex flex-col items-center">
                     <h2 className="wedding-serif text-black text-[16px] tracking-[0.25em] text-center font-semibold">
                         LAISSER NOUS UN
@@ -688,27 +688,30 @@ const Section8 = () => {
                     </form>
 
                     {messages.length > 0 && (
-                        <div className="w-full mt-8 overflow-hidden">
-                            <style>{`
-                                @keyframes marquee {
-                                    0% { transform: translateX(0); }
-                                    100% { transform: translateX(-50%); }
-                                }
-                                .marquee-container {
-                                    display: flex;
-                                    animation: marquee 20s linear infinite;
-                                }
-                                .marquee-container:hover {
-                                    animation-play-state: paused;
-                                }
-                            `}</style>
-                            <div className="marquee-container">
+                        <div className="w-full mt-8 overflow-x-hidden overflow-y-hidden relative">
+                            <div className="flex gap-4 px-2 py-2 animate-scroll">
                                 {duplicatedMessages.map((m, index) => (
-                                    <div key={`${m.nom}-${m.date}-${index}`} className="w-[260px] flex-shrink-0 mx-2">
+                                    <div key={`${m.nom}-${m.date}-${index}`} className="w-[260px] flex-shrink-0">
                                         <MessageCard name={m.nom} message={m.message} date={m.date} />
                                     </div>
                                 ))}
                             </div>
+                            <style jsx>{`
+                                @keyframes scroll {
+                                    0% {
+                                        transform: translateX(0);
+                                    }
+                                    100% {
+                                        transform: translateX(-50%);
+                                    }
+                                }
+                                .animate-scroll {
+                                    animation: scroll 5s linear infinite;
+                                }
+                                .animate-scroll:hover {
+                                    animation-play-state: paused;
+                                }
+                            `}</style>
                         </div>
                     )}
                 </div>
