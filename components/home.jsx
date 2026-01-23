@@ -689,29 +689,49 @@ const Section8 = () => {
 
                     {messages.length > 0 && (
                         <div className="w-full mt-8 overflow-x-hidden overflow-y-hidden relative">
-                            <div className="flex gap-4 px-2 py-2 animate-scroll">
-                                {duplicatedMessages.map((m, index) => (
-                                    <div key={`${m.nom}-${m.date}-${index}`} className="w-[260px] flex-shrink-0">
-                                        <MessageCard name={m.nom} message={m.message} date={m.date} />
-                                    </div>
-                                ))}
+                            <div className="overflow-x-hidden w-full relative">
+                                <div
+                                    className="flex gap-4 px-2 py-2 scroll-marquee"
+                                    style={{
+                                        animationPlayState: 'running',
+                                        animationDuration: `${duplicatedMessages.length * 2}s`,
+                                    }}
+                                    onMouseEnter={e => (e.currentTarget.style.animationPlayState = 'paused')}
+                                    onMouseLeave={e => (e.currentTarget.style.animationPlayState = 'running')}
+                                >
+                                    {duplicatedMessages.map((m, index) => (
+                                        <div key={`${m.nom}-${m.date}-${index}`} className="w-[260px] flex-shrink-0">
+                                            <MessageCard name={m.nom} message={m.message} date={m.date} />
+                                        </div>
+                                    ))}
+                                    {/* Duplicate for seamless looping */}
+                                    {duplicatedMessages.map((m, index) => (
+                                        <div key={`dup-${m.nom}-${m.date}-${index}`} className="w-[260px] flex-shrink-0">
+                                            <MessageCard name={m.nom} message={m.message} date={m.date} />
+                                        </div>
+                                    ))}
+                                </div>
+                                <style jsx>{`
+                                    @keyframes marquee-x {
+                                        0% {
+                                            transform: translateX(0);
+                                        }
+                                        100% {
+                                            transform: translateX(-50%);
+                                        }
+                                    }
+                                    .scroll-marquee {
+                                        display: flex;
+                                        width: max-content;
+                                        animation-name: marquee-x;
+                                        animation-timing-function: linear;
+                                        animation-iteration-count: infinite;
+                                    }
+                                    .scroll-marquee:hover {
+                                        animation-play-state: paused;
+                                    }
+                                `}</style>
                             </div>
-                            <style jsx>{`
-                                @keyframes scroll {
-                                    0% {
-                                        transform: translateX(0);
-                                    }
-                                    100% {
-                                        transform: translateX(-50%);
-                                    }
-                                }
-                                .animate-scroll {
-                                    animation: scroll 5s linear infinite;
-                                }
-                                .animate-scroll:hover {
-                                    animation-play-state: paused;
-                                }
-                            `}</style>
                         </div>
                     )}
                 </div>
