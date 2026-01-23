@@ -3,9 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>kris & frank</title>
-    <script src="./assets/js/react.production.min.js"></script>
-    <script src="./assets/js/react-dom.production.min.js"></script>
-    <script src="./assets/js/tailwind.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style type="text/tailwindcss">
         @theme {
         /* Accent principal — cyan techno, bon en CTA, charts, liens */
@@ -27,7 +25,15 @@
     </style>
 </head>
 <body class="min-h-screen">
-    <div id="root"></div>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="web-app.js"></script>
+    <web-app url="./app.js">
+        <div class="min-h-screen flex flex-col items-center justify-center bg-white">
+            <svg class="animate-spin h-10 w-10 text-primary mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <div class="text-primary text-lg font-semibold">Chargement en cours…</div>
+        </div>
+    </web-app>
 </body>
 </html>

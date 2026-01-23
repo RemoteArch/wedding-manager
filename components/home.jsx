@@ -27,7 +27,7 @@ const FirstImage = () => {
 }
 
 const Section1 = () => {
-    const targetDate = useMemo(() => new Date("2026-02-27T00:00:00"), []);
+    const targetDate = useMemo(() => new Date("2026-03-07T00:00:00"), []);
     const [remaining, setRemaining] = useState({
         days: 0,
         hours: 0,
@@ -65,7 +65,7 @@ const Section1 = () => {
                 </h1>
 
                 <div className="w-full mt-10 rounded-[20px] border-[#5B2A16] p-6 border-t-[2px] border-b-[2px] wedding-serif text-[#5B2A16] text-center text-[30px] font-semibold">
-                    27–28 Fevrier 2026
+                    6–7 Mars 2026
                 </div>
 
                 <div className="w-full grid grid-cols-4 gap-2 mt-10">
@@ -278,8 +278,8 @@ const Section5 = () => {
 const Section6 = ()=>{
     const items = [
         {
-            day: '27',
-            month: 'Février',
+            day: '6',
+            month: 'Mars',
             imageSrc: './assets/images/site/hotel-ville.png',
             time: '19h00',
             title: 'CÉRÉMONIE',
@@ -288,8 +288,8 @@ const Section6 = ()=>{
             mapEmbedSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.0607693793312!2d9.75601808278012!3d4.037035756705238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10610dbf176dc78d%3A0x97c77b35fdbc5772!2sMairie%20de%20Douala%203%C3%A8me!5e1!3m2!1sfr!2scm!4v1767631405203!5m2!1sfr!2scm',
         },
         {
-            day: '28',
-            month: 'Février',
+            day: '7',
+            month: 'Mars',
             imageSrc: './assets/images/site/hotel-ville.png',
             time: 'A 10H00',
             title: 'ETAT CIVIL',
@@ -298,8 +298,8 @@ const Section6 = ()=>{
             mapEmbedSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.0607693793312!2d9.75601808278012!3d4.037035756705238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10610dbf176dc78d%3A0x97c77b35fdbc5772!2sMairie%20de%20Douala%203%C3%A8me!5e1!3m2!1sfr!2scm!4v1767631405203!5m2!1sfr!2scm',
         },
         {
-            day: '28',
-            month: 'Février',
+            day: '7',
+            month: 'Mars',
             imageSrc: './assets/images/site/recpetion.png',
             time: 'A 14H00',
             title: 'BÉNÉDICTION',
@@ -308,8 +308,8 @@ const Section6 = ()=>{
             mapEmbedSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d371.7665445521341!2d9.757244322023276!3d4.007738001234047!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x106173f2947ad993%3A0xc47a5c949a9f61be!2sEEC%20NDOG-PASSI%203!5e1!3m2!1sfr!2scm!4v1767632185377!5m2!1sfr!2scm',
         },
         {
-            day: '28',
-            month: 'Février',
+            day: '7',
+            month: 'Mars',
             imageSrc: './assets/images/site/recpetion.png',
             time: 'A 20H00',
             title: 'RÉCEPTION',
