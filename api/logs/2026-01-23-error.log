@@ -1,0 +1,25 @@
+[23-Jan-2026 20:01:24 Africa/Douala] [2026-01-23T20:01:24+01:00] UNCAUGHT ErrorException: Undefined array key "REQUEST_METHOD" | D:\TAF\project\PERSO\weeding-manager\api\index.php:209
+#0 D:\TAF\project\PERSO\weeding-manager\api\index.php(209): {closure:D:\TAF\project\PERSO\weeding-manager\api\index.php:49}()
+#1 {main}
+
+
+[23-Jan-2026 20:21:35 Africa/Douala] [2026-01-23T20:21:35+01:00] UNCAUGHT ErrorException: Undefined array key "REQUEST_METHOD" | D:\TAF\project\PERSO\weeding-manager\api\index.php:209
+#0 D:\TAF\project\PERSO\weeding-manager\api\index.php(209): {closure:D:\TAF\project\PERSO\weeding-manager\api\index.php:49}()
+#1 {main}
+
+
+[23-Jan-2026 20:22:02 Africa/Douala] [2026-01-23T20:22:02+01:00] UNCAUGHT ErrorException: Undefined array key "REQUEST_METHOD" | D:\TAF\project\PERSO\weeding-manager\api\index.php:209
+#0 D:\TAF\project\PERSO\weeding-manager\api\index.php(209): {closure:D:\TAF\project\PERSO\weeding-manager\api\index.php:49}()
+#1 {main}
+
+
+[23-Jan-2026 23:34:57 Africa/Douala] [2026-01-23T23:34:57+01:00] UNCAUGHT ErrorException: Undefined array key "REQUEST_METHOD" | D:\TAF\project\PERSO\weeding-manager\api\index.php:209
+#0 D:\TAF\project\PERSO\weeding-manager\api\index.php(209): {closure:D:\TAF\project\PERSO\weeding-manager\api\index.php:49}()
+#1 {main}
+
+
+[23-Jan-2026 23:47:22 Africa/Douala] [2026-01-23T23:47:22+01:00] UNCAUGHT ErrorException: Undefined array key "REQUEST_METHOD" | D:\TAF\project\PERSO\weeding-manager\api\index.php:209
+#0 D:\TAF\project\PERSO\weeding-manager\api\index.php(209): {closure:D:\TAF\project\PERSO\weeding-manager\api\index.php:49}()
+#1 {main}
+
+

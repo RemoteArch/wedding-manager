@@ -27,12 +27,32 @@
 <body class="min-h-screen">
     <script type="module" src="web-app.js"></script>
     <web-app url="./app.js">
-        <div class="min-h-screen flex flex-col items-center justify-center bg-white">
-            <svg class="animate-spin h-10 w-10 text-primary mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-            </svg>
-            <div class="text-primary text-lg font-semibold">Chargement en cours…</div>
+        <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#fef3ed] to-white">
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Dancing+Script:wght@400;700&display=swap');
+                .loading-serif { font-family: "Playfair Display", serif; }
+                .loading-script { font-family: "Dancing Script", cursive; }
+                @keyframes pulse-ring {
+                    0% { transform: scale(0.9); opacity: 0.8; }
+                    50% { transform: scale(1.1); opacity: 0.4; }
+                    100% { transform: scale(0.9); opacity: 0.8; }
+                }
+                .animate-pulse-ring { animation: pulse-ring 2s ease-in-out infinite; }
+            </style>
+            <div class="relative mb-6">
+                <div class="w-20 h-20 rounded-full border-2 border-[#5B2A16]/30 flex items-center justify-center animate-pulse-ring">
+                    <div class="w-14 h-14 rounded-full border-2 border-[#5B2A16]/50 flex items-center justify-center">
+                        <span class="loading-script text-[#B45B37] text-2xl font-bold">K&F</span>
+                    </div>
+                </div>
+            </div>
+            <p class="loading-script text-[#B45B37] text-2xl mb-2">Kristel & Frank</p>
+            <p class="loading-serif text-[#5B2A16] text-sm tracking-widest uppercase">Chargement en cours…</p>
+            <div class="flex gap-1 mt-4">
+                <span class="w-2 h-2 rounded-full bg-[#5B2A16] animate-bounce" style="animation-delay: 0s;"></span>
+                <span class="w-2 h-2 rounded-full bg-[#5B2A16] animate-bounce" style="animation-delay: 0.15s;"></span>
+                <span class="w-2 h-2 rounded-full bg-[#5B2A16] animate-bounce" style="animation-delay: 0.3s;"></span>
+            </div>
         </div>
     </web-app>
 </body>
