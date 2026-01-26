@@ -122,7 +122,7 @@ const Dashboard = ({ onLogout }) => {
     const fetchInvitations = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${API_BASE_URL}/all_invitations`);
+            const response = await fetch(`${API_BASE_URL}/invitations`);
             const result = await response.json();
             if (result.success && Array.isArray(result.data)) {
                 setInvitations(result.data);
@@ -137,7 +137,7 @@ const Dashboard = ({ onLogout }) => {
     const updateStatus = async (code, newStatus) => {
         setUpdatingCode(code);
         try {
-            const response = await fetch(`${API_BASE_URL}/update_invitation_status`, {
+            const response = await fetch(`${API_BASE_URL}/invitation_status`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ code, status: newStatus })

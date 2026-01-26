@@ -65,7 +65,7 @@ const updatePageMetadata = (href, title = 'Kristel & Frank - Mariage') => {
 
 updatePageMetadata('./assets/images/initial.png');
 
-const API_URL = "/api/index.php/index/all_invitations";
+const API_URL = "/api/index.php/index/invitations";
 
 const fetchGuestList = async () => {
     try {
@@ -120,7 +120,7 @@ const ScanPanel = () => {
       
       if (guest.status !== 'scanned') {
         try {
-          await fetch('/api/index.php/index/update_invitation_status', {
+          await fetch('/api/index.php/index/invitation_status', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

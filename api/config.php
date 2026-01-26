@@ -1,9 +1,9 @@
 <?php
 
-define("DB_HOST", "57.128.98.162");
-define("DB_NAME", "pprod33gdzenapps_33exportquiz");
-define("DB_USER", "pprod33gdzenapps_pprod33gdzenapps");
-define("DB_PASS", "Koy7)@p?ysR%,V7=");
+define("DB_HOST", "");
+define("DB_NAME", "");
+define("DB_USER", "");
+define("DB_PASS", "");
 define("DB_PORT", 3306);
 
 

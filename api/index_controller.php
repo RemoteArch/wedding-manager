@@ -1,7 +1,8 @@
 <?php
 
-function find_invite_by_code($params) {
-    $code = $params['code'] ?? 'MXTW3';
+function get_invitations($params) {
+    $code = $params['code'] ?? null;
+
     $path = __DIR__ . '/../data/inviter_with_codes.json';
     $content = file_get_contents($path);
     if ($content === false) {
@@ -10,6 +11,9 @@ function find_invite_by_code($params) {
     $entries = json_decode($content, true);
     if (!is_array($entries)) {
         throw new Exception("Le format du fichier des invités est invalide");
+    }
+    if (empty($code)) {
+        return $entries;
     }
     foreach ($entries as $entry) {
         if (isset($entry['invite_code']) && $entry['invite_code'] === $code) {
@@ -19,20 +23,7 @@ function find_invite_by_code($params) {
     throw new Exception("Aucune invitation trouvée pour ce code");
 }
 
-function all_invitations($params){
-    $path = __DIR__ . '/../data/inviter_with_codes.json';
-    $content = file_get_contents($path);
-    if ($content === false) {
-        throw new Exception("Fichier des invités introuvable");
-    }
-    $entries = json_decode($content, true);
-    if (!is_array($entries)) {
-        throw new Exception("Le format du fichier des invités est invalide");
-    }
-    return $entries;
-}
-
-function update_invitation_status($params , $data) {
+function post_invitation_status($params , $data) {
     $code = $data['code'] ?? '';
     $status = $data['status'] ?? '';
     
@@ -73,7 +64,7 @@ function update_invitation_status($params , $data) {
     return ['success' => true, 'message' => 'Statut mis à jour avec succès'];
 }
 
-function read_voueux($params) {
+function get_voueux($params) {
     $path = __DIR__ . '/../data/voueux.json';
     if (!file_exists($path)) {
         return [];
@@ -89,7 +80,7 @@ function read_voueux($params) {
     return $voueux;
 }
 
-function save_voueux($params , $data) {
+function post_voueux($params , $data) {
     $nom = $data['name'] ?? '';
     $message = $data['message'] ?? '';
     
@@ -128,7 +119,7 @@ function save_voueux($params , $data) {
     return ['success' => true, 'message' => 'Vœu enregistré avec succès'];
 }
 
-function upload($params, $data) {
+function post_upload($params, $data) {
     $inviteName = $data['invite_name'] ?? '';
     
     if (empty($inviteName)) {
@@ -181,7 +172,7 @@ function upload($params, $data) {
     ];
 }
 
-function read_media($params) {
+function get_media($params) {
     $uploadDir = __DIR__ . '/uploads/media/';
     
     if (!is_dir($uploadDir)) {

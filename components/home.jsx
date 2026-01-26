@@ -547,7 +547,7 @@ const Section8 = () => {
 
     const fetchMessages = async () => {
         try {
-            const response = await fetch('/api/index.php/index/read_voueux');
+            const response = await fetch('/api/index.php/index/voueux');
             if (response.ok) {
                 const result = await response.json();
                 if (result.success && Array.isArray(result.data)) {
@@ -567,7 +567,7 @@ const Section8 = () => {
 
         setLoading(true);
         try {
-            const response = await fetch('/api/index.php/index/save_voueux', {
+            const response = await fetch('/api/index.php/index/voueux', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

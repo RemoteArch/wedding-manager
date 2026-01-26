@@ -241,7 +241,7 @@ const Gallery = () => {
     const fetchMedia = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${API_BASE_URL}/read_media`);
+            const response = await fetch(`${API_BASE_URL}/media`);
             const result = await response.json();
             if (result.success) setMedia(result.data);
         } catch (err) {
@@ -352,7 +352,20 @@ const Gallery = () => {
                                     )}
                                     {/* Overlay plus discret */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                                        <p className="gallery-serif text-white text-sm">{item.invite_name}</p>
+                                        <div className="flex items-center justify-between">
+                                            <p className="gallery-serif text-white text-sm">{item.invite_name}</p>
+                                            <a 
+                                                href={item.path} 
+                                                download 
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white/40 transition-colors"
+                                                title="Télécharger"
+                                            >
+                                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                </svg>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -364,7 +377,7 @@ const Gallery = () => {
             {/* --- FOOTER TRÈS DISCRET --- */}
             <footer className="py-6 bg-[#5B2A16] border-t border-[#FFD365]/10">
                 <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-white/50">
-                    <p className="gallery-body text-[10px] tracking-[0.2em] uppercase">© 2026 • Kristel & Frank</p>
+                    <p className="gallery-body text-[10px] tracking-[0.2em] uppercase"> 2026 • Kristel & Frank</p>
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-px bg-[#FFD365]/30" />
                         <p className="gallery-script text-[#FFD365] text-lg">Merci d'être là</p>

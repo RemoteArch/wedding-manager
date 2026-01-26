@@ -45,11 +45,9 @@ function secureLog($message, $file = "system.log") {
 // HANDLERS: errors -> exceptions, uncaught, fatal
 // ---------------------------
 
-// Convertit warnings/notices en exceptions pour passer dans ton try/catch
+// Convertit warnings/notices en exceptions
 set_error_handler(function ($severity, $message, $file, $line) {
-    // Si l'erreur est masquée par @, ignorer
     if (!(error_reporting() & $severity)) return false;
-
     throw new ErrorException($message, 0, $severity, $file, $line);
 });
 
@@ -69,7 +67,7 @@ set_exception_handler(function ($e) {
     exit;
 });
 
-// Log les fatal errors (E_ERROR, E_PARSE, etc.)
+// Log les fatal errors
 register_shutdown_function(function () {
     $err = error_get_last();
     if (!$err) return;
@@ -202,93 +200,168 @@ function dieJson($data, $success = true, $statusCode = 200) {
 //  ROUTING FONCTIONNEL UNIQUEMENT (Pas de classes)
 // --------------------------------------------------------
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Authorization, Content-Type");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
+header("Access-Control-Allow-Headers: *");
+header("Access-Control-Allow-Methods: *");
 header("Access-Control-Max-Age: 86400");
 
 if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") dieJson([], true);
 
-// Décomposer URL (sans query string)
-$requestPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) ?? '';
-$requestPath = str_replace("/index.php", "", $requestPath);
-$uri = explode("/", trim($requestPath, "/"));
-$count = count($uri);
+$methodHTTP = $_SERVER["REQUEST_METHOD"];
+$methodPrefix = strtolower($methodHTTP) . "_";
 
-// Récupérer les 2 derniers segments
-if ($count >= 2) {
-    $file = $uri[$count - 2];
-    $function = $uri[$count - 1];
-} else {
-    $file = $uri[0] ?? "";
-    $function = "index";
-}
-
-// Sécurisation
-if (!preg_match('/^[a-zA-Z0-9_]+$/', $file) || !preg_match('/^[a-zA-Z0-9_]+$/', $function)) {
-    dieJson("Invalid route", false, 400);
-}
-
-// Préparation
-$fileController = $file . "_controller.php";
-$functionController = $function . "_controller.php";
-
-$finalControllerFile = null;
-$finalFunction = null;
-
-// 1) file_controller.php
-if (file_exists($fileController)) {
-    $finalControllerFile = $fileController;
-    $finalFunction = $function;
-}
-// 2) function_controller.php (fallback)
-elseif (file_exists($functionController)) {
-    $finalControllerFile = $functionController;
-    $finalFunction = "index";
-}
-// 3) Aucun fichier trouvé
-else {
-    dieJson("Route not found", false, 404);
-}
-
-// Maintenant require
-require_once $finalControllerFile;
-
-// IMPORTANT → récupérer les fonctions après require
-$allFunctions = get_defined_functions()['user'];
-
+// ---------------------------
+// ROUTE HELPERS
+// ---------------------------
 function normalizeRouteName(string $route) {
     $route = str_replace(["-", "."], "_", $route);
     return strtolower($route);
 }
 
-// Récupérer toutes les fonctions dans ce fichier
+function isValidName(?string $s): bool {
+    if ($s === null || $s === '') return true;
+    return (bool)preg_match('/^[a-zA-Z0-9_]+$/', $s);
+}
+
+function controllerExists(string $name): bool {
+    return file_exists(__DIR__ . "/" . $name . "_controller.php");
+}
+
+/**
+ * Charge un controller et vérifie si une fonction METHOD_<route> existe dans ce fichier.
+ * Exemple: GET + route "index" => get_index()
+ */
+function loadAndHasMethodFunction(string $controllerFile, string $methodPrefix, string $route): bool {
+    require_once $controllerFile;
+
+    $all = get_defined_functions()['user'];
+    foreach ($all as $fn) {
+        if (!str_starts_with($fn, $methodPrefix)) continue;
+
+        $ref = new ReflectionFunction($fn);
+        if ($ref->getFileName() !== realpath($controllerFile)) continue;
+
+        $clean = substr($fn, strlen($methodPrefix));
+        if (normalizeRouteName($clean) === normalizeRouteName($route)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// ---------------------------
+// PARSE URL -> segments (retire le dossier du script + index.php)
+// ---------------------------
+$requestPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) ?? '';
+
+// 1) Retirer le "base path" où se trouve index.php (ex: /api)
+$scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/'); // ex: "/api"
+if ($scriptDir !== '' && $scriptDir !== '.' && str_starts_with($requestPath, $scriptDir)) {
+    $requestPath = substr($requestPath, strlen($scriptDir));
+}
+
+// 2) Retirer index.php si présent (au début du path restant)
+$requestPath = preg_replace('#^/index\.php(?:/|$)#', '/', $requestPath);
+
+// 3) Normaliser (éviter //)
+$requestPath = preg_replace('#/+#', '/', $requestPath);
+
+// 4) Découper en segments
+$segments = array_values(array_filter(explode("/", trim($requestPath, "/")), fn($s) => $s !== ''));
+
+$count = count($segments);
+$A = $count >= 2 ? $segments[$count - 2] : null; // avant-dernier
+$B = $count >= 1 ? $segments[$count - 1] : null; // dernier
+
+// Sécurisation segments
+if (!isValidName($A) || !isValidName($B)) {
+    dieJson("Invalid route", false, 400);
+}
+
+// ---------------------------
+// SELECTION controller + function
+// ---------------------------
+$finalControllerFile = null;
+$finalFunction = null;
+
+// CAS >= 2 segments : A = fichier, B = fonction
+if ($count >= 2) {
+    if (controllerExists($A)) {
+        $finalControllerFile = __DIR__ . "/" . $A . "_controller.php";
+        $finalFunction = $B;
+    } elseif (controllerExists($B)) {
+        // fallback : dernier segment = controller, fonction = index
+        $finalControllerFile = __DIR__ . "/" . $B . "_controller.php";
+        $finalFunction = "index";
+    }
+}
+
+// CAS 1 segment : B = controller, fonction = index
+if ($finalControllerFile === null && $count === 1) {
+    if (controllerExists($B)) {
+        $finalControllerFile = __DIR__ . "/" . $B . "_controller.php";
+        $finalFunction = "index";
+    }
+}
+
+// FALLBACK index_controller.php
+if ($finalControllerFile === null) {
+    $indexFile = __DIR__ . "/index_controller.php";
+    if (!file_exists($indexFile)) {
+        dieJson("Route not found", false, 404);
+    }
+
+    // CAS 0 segment : uniquement index->index
+    if ($count === 0) {
+        if (loadAndHasMethodFunction($indexFile, $methodPrefix, "index")) {
+            $finalControllerFile = $indexFile;
+            $finalFunction = "index";
+        } else {
+            dieJson("Route not found", false, 404);
+        }
+    }
+    // CAS >=1 : index->B sinon index->index
+    else {
+        if ($B !== null && loadAndHasMethodFunction($indexFile, $methodPrefix, $B)) {
+            $finalControllerFile = $indexFile;
+            $finalFunction = $B;
+        } elseif (loadAndHasMethodFunction($indexFile, $methodPrefix, "index")) {
+            $finalControllerFile = $indexFile;
+            $finalFunction = "index";
+        } else {
+            dieJson("Route not found", false, 404);
+        }
+    }
+}
+
+// ---------------------------
+// REQUIRE controller final
+// ---------------------------
+require_once $finalControllerFile;
+
+// ---------------------------
+// TROUVER LA VRAIE FONCTION DANS CE FICHIER (selon méthode HTTP)
+// ---------------------------
+$allFunctions = get_defined_functions()['user'];
 $routeRequested = normalizeRouteName($finalFunction);
 $fileFunctions = [];
 
 foreach ($allFunctions as $fn) {
     $ref = new ReflectionFunction($fn);
 
-    // Vérifier le fichier
     if ($ref->getFileName() !== realpath($finalControllerFile)) continue;
 
-    // Fonction PRIVÉE (commence par __) -> ignorée
-    if (str_starts_with($fn, "__")) continue;
+    if (str_starts_with($fn, $methodPrefix)) {
+        $cleanFn = substr($fn, strlen($methodPrefix));
+        $normalized = normalizeRouteName($cleanFn);
 
-    // Nettoyer le nom interne
-    $cleanFn = $fn;
-    if (str_starts_with($fn, "_")) {
-        $cleanFn = substr($fn, 1);
-    }
-
-    $normalized = normalizeRouteName($cleanFn);
-
-    if ($normalized === $routeRequested) {
-        $fileFunctions[] = $fn;
+        if ($normalized === $routeRequested) {
+            $fileFunctions[] = $fn;
+        }
     }
 }
 
 if (empty($fileFunctions)) {
-    dieJson("Function $finalFunction not found", false, 404);
+    dieJson("Function {$methodPrefix}{$finalFunction} not found", false, 404);
 }
 
 $realFunction = $fileFunctions[0];
@@ -298,15 +371,11 @@ $paramCount = $refFunc->getNumberOfParameters();
 // --------------------------------------------------------
 //  Vérification méthode HTTP vs paramCount
 // --------------------------------------------------------
-$methodHTTP = $_SERVER["REQUEST_METHOD"];
 $methodAllowed = false;
 
-// GET + DELETE acceptent 0 ou 1 param
 if ($methodHTTP === "GET" || $methodHTTP === "DELETE") {
     if ($paramCount === 0 || $paramCount === 1) $methodAllowed = true;
-}
-// POST + PUT doivent avoir 2 params
-elseif ($methodHTTP === "POST" || $methodHTTP === "PUT") {
+} elseif ($methodHTTP === "POST" || $methodHTTP === "PUT") {
     if ($paramCount === 2) $methodAllowed = true;
 }
 
@@ -317,16 +386,18 @@ if (!$methodAllowed) {
 // --------------------------------------------------------
 //  Préparation des paramètres
 // --------------------------------------------------------
-$queryParams = $_GET;
+$params = $_GET;
+$data = [];
 
-$raw = file_get_contents("php://input");
-$jsonData = json_decode($raw, true);
-if (!is_array($jsonData)) $jsonData = [];
+if ($paramCount === 2) {
+    $raw = file_get_contents("php://input");
+    $jsonData = json_decode($raw, true);
+    if (!is_array($jsonData)) $jsonData = [];
+    $data = array_merge($jsonData, $_POST);
 
-$data = array_merge($jsonData, $_POST);
-
-if (!empty($_FILES)) {
-    $data["files"] = $_FILES;
+    if (!empty($_FILES)) {
+        $data["files"] = $_FILES;
+    }
 }
 
 // --------------------------------------------------------
@@ -339,20 +410,21 @@ try {
         "params"  => $_GET,
         "data"    => $data,
         "headers" => function_exists('getallheaders') ? getallheaders() : [],
+        "controller" => $finalControllerFile,
+        "function"   => $realFunction
     ], 'api.log');
 
     if ($paramCount === 0) {
         $result = $refFunc->invoke();
     } elseif ($paramCount === 1) {
-        $result = $refFunc->invoke($queryParams);
+        $result = $refFunc->invoke($params);
     } else {
-        $result = $refFunc->invoke($queryParams, $data);
+        $result = $refFunc->invoke($params, $data);
     }
 
     dieJson($result, true, 200);
 
 } catch (Throwable $e) {
-    // Log détaillé + trace
     secureLog([
         "type"    => get_class($e),
         "message" => $e->getMessage(),
@@ -363,9 +435,5 @@ try {
 
     $code = (int)$e->getCode();
     if ($code < 100 || $code > 599) $code = 500;
-
-    // En prod tu peux laisser le message générique si tu préfères :
-    // dieJson("Internal Server Error", false, $code);
-
     dieJson($e->getMessage(), false, $code);
 }

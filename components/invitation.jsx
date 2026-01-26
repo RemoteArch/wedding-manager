@@ -8,7 +8,7 @@ let inviteData = null;
 
 if (code) {
     try {
-        const response = await fetch(`/api/index.php/index/find_invite_by_code?code=${code}`);
+        const response = await fetch(`/api/index.php/index/invitations?code=${code}`);
         const data = await response.json();
         inviteData = data.data;
         console.log(inviteData);
