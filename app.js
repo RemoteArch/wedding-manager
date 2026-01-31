@@ -1,54 +1,47 @@
-const {
-  useState,
-  useEffect,
-  useRef
-} = React;
+const { useState, useEffect } = React;
 
 function getComponentName() {
-  let hash = window.location.hash.replace('#', '') || 'home';
-  return hash.toLowerCase();
+  return (window.location.hash.replace('#', '') || 'home').toLowerCase();
 }
 
-const initModule = await loadModule(`./components/${getComponentName()}.jsx`);
+// Préload lancé tout de suite (sans await)
+let initialName = getComponentName();
+const {default:initialComponent} = await loadModule('components/'+initialName+'.jsx');
+
 
 function App() {
-  const [name, setName] = useState(null);
-  const [Component, setComponent] = useState(() => initModule.default);
-  const [error, setError] = useState(null);
+  const [name, setName] = useState(getComponentName());     // pas null
+  const [Component, setComponent] = useState(() => initialComponent); // composant direct
+
+  useEffect(() => {
+    const handleHashChange = () => setName(getComponentName());
+    window.addEventListener('hashchange', handleHashChange);
+
+    if (!window.location.hash) window.location.hash = '#home';
+
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   useEffect(() => {
     if (!name) return;
+    // console.log(name , initialName)
+    if(name == initialName) return;
+    initialName = name;
 
-    const url = `./components/${name}.jsx`;
-    setError(null);
-
-    loadModule(url)
+    loadModule(`components/${name}.jsx`)
       .then((module) => {
-        setComponent(() => module.default);
+        if (module?.default) setComponent(() => module.default);
+        else console.error("Module chargé mais pas de default export:", module);
       })
       .catch((err) => {
         console.error('Erreur de chargement du composant:', err);
-        setError(`Impossible de charger le composant "${name}"`);
+        // IMPORTANT: on ne met pas Component à null → pas de flash blanc
       });
   }, [name]);
 
-  useEffect(() => {
-    const handleHashChange = () => {
-      setName(getComponentName());
-    };
-    window.addEventListener('hashchange', handleHashChange);
-    if (!window.location.hash) {
-      window.location.hash = '#home';
-    }
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-    };
-  }, []);
-
-  if (error) {
-    return /*#__PURE__*/React.createElement("div", { className: "error" }, error);
-  }
-
-  return Component ? /*#__PURE__*/React.createElement(Component, null) : null;
+  // Ici Component n'est jamais null si initialComponent est OK
+  return React.createElement(Component, null);
 }
+
+
 export default App;

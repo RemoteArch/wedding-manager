@@ -47,7 +47,7 @@ const WelcomePanel = () => {
                 alt={imageAlt}
                 className="w-full h-auto object-contain relative z-0"
             />
-            <div className="absolute w-full h-[741px] -bottom-100 bg-white blur-[75px] pointer-events-none z-0"></div>
+            <div className="absolute w-full h-[741px] -bottom-[500px] bg-white blur-[75px] pointer-events-none z-0"></div>
 
         </section>
     );
@@ -67,6 +67,12 @@ updatePageMetadata('./assets/images/initial.png');
 
 const API_URL = "/api/index.php/index/invitations";
 
+const shortTableLabel = (table) => {
+    const s = String(table || '');
+    const m = s.match(/TABLE\s*N[°º]?\s*\d+/i);
+    return m ? m[0].toUpperCase().replace('TABLE' , '') : s;
+};
+
 const fetchGuestList = async () => {
     try {
         const response = await fetch(API_URL);
@@ -74,7 +80,7 @@ const fetchGuestList = async () => {
         if (result.success && Array.isArray(result.data)) {
             return result.data.map(item => ({
                 nom: item.invite,
-                table: item.table,
+                table: shortTableLabel(item.table),
                 code: item.invite_code,
                 status: item.status
             }));

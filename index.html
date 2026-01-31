@@ -3,7 +3,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>kris & frank</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind.min.js"></script>
+
     <style type="text/tailwindcss">
         @theme {
         /* Accent principal — cyan techno, bon en CTA, charts, liens */
@@ -22,7 +23,13 @@
         --color-tertiary-dark:   #0B1220; /* quasi bleu-noir (app bars) */
        }
         @custom-variant dark (&:where(.dark, .dark *));
+        :root{
+            --color-primary: #00B5D8;
+        }
     </style>
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+
 </head>
 <body class="min-h-screen">
     <script type="module" src="web-app.js"></script>

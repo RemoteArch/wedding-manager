@@ -154,9 +154,10 @@ const Dashboard = ({ onLogout }) => {
     };
 
     const tables = useMemo(() => {
-        const tableSet = new Set(invitations.map(inv => inv.table));
-        return Array.from(tableSet).sort((a, b) => a - b);
+        const tableSet = new Set(invitations.map(inv => inv.table).filter(Boolean));
+        return Array.from(tableSet).sort((a, b) => String(a).localeCompare(String(b), 'fr'));
     }, [invitations]);
+
 
     const filteredInvitations = useMemo(() => {
         return invitations.filter(inv => {
@@ -165,7 +166,7 @@ const Dashboard = ({ onLogout }) => {
             const matchesStatus = filterStatus === 'all' || 
                                   (filterStatus === 'scanned' && inv.status === 'scanned') ||
                                   (filterStatus === 'pending' && inv.status !== 'scanned');
-            const matchesTable = filterTable === 'all' || inv.table === parseInt(filterTable);
+            const matchesTable = filterTable === 'all' || String(inv.table) === String(filterTable);
             return matchesSearch && matchesStatus && matchesTable;
         });
     }, [invitations, searchTerm, filterStatus, filterTable]);
@@ -180,6 +181,12 @@ const Dashboard = ({ onLogout }) => {
     const handleLogout = () => {
         localStorage.removeItem('admin_logged_in');
         onLogout();
+    };
+
+    const shortTableLabel = (table) => {
+        const s = String(table || '');
+        const m = s.match(/TABLE\s*N[°º]?\s*\d+/i);
+        return m ? m[0].toUpperCase() : s;
     };
 
     return (
@@ -363,8 +370,11 @@ const Dashboard = ({ onLogout }) => {
                                                 </code>
                                             </td>
                                             <td className="px-5 py-4 text-center">
-                                                <span className="inline-flex items-center justify-center w-[32px] h-[32px] rounded-full bg-[#5B2A16] text-white text-[13px] font-semibold">
-                                                    {inv.table}
+                                                <span
+                                                    title={inv.table}
+                                                    className="inline-flex items-center px-3 py-1 rounded-full bg-[#5B2A16]/10 text-[#5B2A16] text-[12px] font-semibold"
+                                                >
+                                                    {shortTableLabel(inv.table)}
                                                 </span>
                                             </td>
                                             <td className="px-5 py-4 text-center">
@@ -400,7 +410,7 @@ const Dashboard = ({ onLogout }) => {
                                                 <div className="flex items-center justify-center gap-2">
                                                     <button
                                                         onClick={() => {
-                                                            navigator.clipboard.writeText(`https://kris-frank2026.free.nf/?code=${inv.invite_code}`);
+                                                            navigator.clipboard.writeText(`https://kris-frank2026.free.nf/?code=${inv.invite_code}#invitation`);
                                                             setCopiedCode(inv.invite_code);
                                                             setTimeout(() => setCopiedCode(null), 2000);
                                                         }}

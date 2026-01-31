@@ -19,6 +19,12 @@ if (code) {
     window.location.hash = '#home';
 }
 
+const shortTableLabel = (table) => {
+    const s = String(table || '');
+    const m = s.match(/TABLE\s*N[°º]?\s*\d+/i);
+    return m ? m[0].toUpperCase().replace('TABLE' , '') : s;
+};
+
 const Section1 = () => {
     return (
         <section className="relative w-full h-full max-h-[650px] bg-gradient-to-b from-[#9C370B] to-[#BF5F35] p-10">
@@ -38,7 +44,7 @@ const Section1 = () => {
                     <a href="/">
                         <img src="./assets/images/home/ici.png" className="w-30" />
                     </a>
-                    <p className="pt-4 text-white eb-garamond text-center ">TABLE <br/> <span className="text-black font-bold">{inviteData?.table}</span></p>
+                    <p className="pt-4 text-white eb-garamond text-center ">TABLE <br/> <span className="text-black font-bold">{shortTableLabel(inviteData?.table)}</span></p>
                 </div>
             </div>            
         </section>
