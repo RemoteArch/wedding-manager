@@ -228,3 +228,11 @@ function get_media($params) {
     
     return $mediaList;
 }
+
+function get_snaplink($params) {
+    
+}
+
+function post_snaplink($params, $data) {
+    
+}

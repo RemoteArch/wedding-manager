@@ -108,7 +108,7 @@ const Section2 = () => {
             img: "./assets/images/site/bene-nuptiale.png",
             title: "EGLISE",
             title2:"BENÉDICTION NUPTIALE",
-            subtitle: "EEC Paroisse de Ndognpassi 3",
+            subtitle: "EEC Paroisse de Ndogpassi 3",
         },
         {
             img: "./assets/images/site/reception.png",
@@ -291,7 +291,7 @@ const Section6 = ()=>{
             day: '7',
             month: 'Mars',
             imageSrc: './assets/images/site/hotel-ville.png',
-            time: 'A 10H00',
+            time: 'A 9H00',
             title: 'ETAT CIVIL',
             subtitle: '',
             locationLabel: 'Centre d\u2019état civil de Logbaba',
@@ -301,7 +301,7 @@ const Section6 = ()=>{
             day: '7',
             month: 'Mars',
             imageSrc: './assets/images/site/recpetion.png',
-            time: 'A 14H00',
+            time: 'A 15H00',
             title: 'BÉNÉDICTION',
             subtitle: 'NUPTIALE',
             locationLabel: 'EEC Paroisse de Ndogpassi 3',
@@ -502,7 +502,7 @@ const Section7 = ()=>{
 
                         <div className="w-full text-center py-2">
                             <p className="wedding-serif w-full text-black text-[18px] tracking-[0.08em] font-semibold leading-snug">
-                                " CHAQUE HISTOIRE D'AMOUR COMMENCE PAR UN REGARD ET SE TISSE DANS LES SILENCES PARTAGÉS "
+                                "Un murmure de ta voix, l'éclat d'une rencontre, et l'amour s'enracine là où le temps s'efface."
                             </p>
                         </div>
                         <div className="w-full overflow-hidden bg-white">
@@ -590,7 +590,11 @@ const Section8 = () => {
         }
     };
 
-    const MessageCard = ({ name: author, message: body, date }) => {
+
+    const duplicatedMessages = [...messages, ...messages];
+    const [selectedMessage, setSelectedMessage] = useState(null);
+
+    const MessageCard = ({ name: author, message: body, date, onClick }) => {
         const formatDate = (dateString) => {
             if (!dateString) return '';
             const d = new Date(dateString);
@@ -603,7 +607,10 @@ const Section8 = () => {
         };
 
         return (
-            <div className="relative w-full rounded-[14px] bg-white border border-black/10 px-4 py-4 overflow-hidden">
+            <div 
+                onClick={onClick}
+                className="relative w-full rounded-[14px] bg-white border border-black/10 px-4 py-4 overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+            >
                 <img
                     src="./assets/images/site/section3-fleur2.png"
                     alt="Décor"
@@ -615,19 +622,19 @@ const Section8 = () => {
                             {author.charAt(0).toUpperCase()}
                         </span>
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
-                            <p className="wedding-serif text-[#7A1F1B] text-[14px] font-semibold">
+                            <p className="wedding-serif text-[#7A1F1B] text-[14px] font-semibold truncate">
                                 {author}
                             </p>
                         </div>
                         
-                        <p className="wedding-serif text-black/80 text-[14px] mt-1 truncate">
+                        <p className="wedding-serif text-black/80 text-[14px] mt-1 line-clamp-2 overflow-hidden">
                             {body}
                         </p>
 
                         {date && (
-                            <p className="wedding-serif text-black/50 text-[12px] whitespace-nowrap text-right">
+                            <p className="wedding-serif text-black/50 text-[12px] whitespace-nowrap text-right mt-1">
                                 {formatDate(date)}
                             </p>
                         )}
@@ -637,7 +644,65 @@ const Section8 = () => {
         );
     };
 
-    const duplicatedMessages = [...messages, ...messages];
+    const MessagePopup = ({ message, onClose }) => {
+        if (!message) return null;
+
+        const formatDate = (dateString) => {
+            if (!dateString) return '';
+            const d = new Date(dateString);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            return `${day}/${month}/${year} à ${hours}:${minutes}`;
+        };
+
+        return (
+            <div 
+                className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+                onClick={onClose}
+            >
+                <div 
+                    className="bg-white rounded-[20px] max-w-[400px] w-full p-6 relative"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <button
+                        onClick={onClose}
+                        className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-black/10 hover:bg-black/20 transition-colors"
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6L18 18" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                    </button>
+                    
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="w-[40px] h-[40px] rounded-full bg-[#7A1F1B]/10 flex items-center justify-center flex-shrink-0">
+                            <span className="wedding-serif text-[#7A1F1B] text-[16px] font-semibold">
+                                {message.nom.charAt(0).toUpperCase()}
+                            </span>
+                        </div>
+                        <div>
+                            <p className="wedding-serif text-[#7A1F1B] text-[18px] font-semibold">
+                                {message.nom}
+                            </p>
+                            {message.date && (
+                                <p className="wedding-serif text-black/50 text-[12px]">
+                                    {formatDate(message.date)}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    
+                    <div className="border-t border-black/10 pt-4">
+                        <p className="wedding-serif text-black/80 text-[15px] leading-relaxed whitespace-pre-wrap">
+                            {message.message}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     return (
         <section className="w-full bg-[#efefef] py-12">
@@ -701,13 +766,22 @@ const Section8 = () => {
                                 >
                                     {duplicatedMessages.map((m, index) => (
                                         <div key={`${m.nom}-${m.date}-${index}`} className="w-[260px] flex-shrink-0">
-                                            <MessageCard name={m.nom} message={m.message} date={m.date} />
+                                            <MessageCard 
+                                                name={m.nom} 
+                                                message={m.message} 
+                                                date={m.date} 
+                                                onClick={() => setSelectedMessage(m)}
+                                            />
                                         </div>
                                     ))}
-                                    {/* Duplicate for seamless looping */}
                                     {duplicatedMessages.map((m, index) => (
                                         <div key={`dup-${m.nom}-${m.date}-${index}`} className="w-[260px] flex-shrink-0">
-                                            <MessageCard name={m.nom} message={m.message} date={m.date} />
+                                            <MessageCard 
+                                                name={m.nom} 
+                                                message={m.message} 
+                                                date={m.date} 
+                                                onClick={() => setSelectedMessage(m)}
+                                            />
                                         </div>
                                     ))}
                                 </div>
@@ -736,6 +810,11 @@ const Section8 = () => {
                     )}
                 </div>
             </div>
+            
+            <MessagePopup 
+                message={selectedMessage} 
+                onClose={() => setSelectedMessage(null)} 
+            />
         </section>
     );
 }
@@ -789,7 +868,7 @@ const Footer = ()=>{
 
                         <div className="mt-5 space-y-4">
                             <ContactRow
-                                text="kabojohna@gmail.com"
+                                text="kabojohan@gmail.com"
                                 icon={
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M4 6h16v12H4V6z" stroke="white" strokeWidth="1.7" strokeLinejoin="round" />

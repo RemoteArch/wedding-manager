@@ -21,8 +21,8 @@ if (code) {
 
 const shortTableLabel = (table) => {
     const s = String(table || '');
-    const m = s.match(/TABLE\s*N[°º]?\s*\d+/i);
-    return m ? m[0].toUpperCase().replace('TABLE' , '') : s;
+    const m = s.match(/TABLE\s*N[°º]?\s*\d+\s+(.+)/i);
+    return m ? m[1].trim() : s;
 };
 
 const Section1 = () => {
@@ -155,9 +155,9 @@ const Section3 = () => {
                         rel="noopener noreferrer"
                     >
                         <img
-                            src="assets/images/home/snapchat-filter.png"
+                            src="assets/images/home/snap.png"
                             alt="Filtre Snapchat du mariage"
-                            className="w-32 h-32 md:w-40 md:h-40 object-contain my-[-7px]"
+                            className="w-full h-32 md:w-40 md:h-40 object-contain my-[-7px]"
                         />
                     </a>
                 </div>
