@@ -89,6 +89,73 @@ function post_invitations($params , $data) {
     ];
 }
 
+function post_invitation($params, $data) {
+    $dir = __DIR__ . '/../data';
+    $basePath = $dir . '/inviter_with_codes.json';
+
+    // Trouver le dernier fichier
+    $latestPath = $basePath;
+    $latestTs = -1;
+
+    $files = glob($dir . '/inviter_with_codes-*.json');
+    if (is_array($files)) {
+        foreach ($files as $f) {
+            $name = basename($f);
+            if (preg_match('/^inviter_with_codes-(\d+)\.json$/', $name, $m)) {
+                $ts = (int)$m[1];
+                if ($ts > $latestTs) {
+                    $latestTs = $ts;
+                    $latestPath = $f;
+                }
+            }
+        }
+    }
+
+    // Lire le fichier existant
+    $content = file_get_contents($latestPath);
+    if ($content === false) {
+        throw new Exception("Fichier des invités introuvable");
+    }
+
+    $entries = json_decode($content, true);
+    if (!is_array($entries)) {
+        throw new Exception("Le format du fichier des invités est invalide");
+    }
+
+    // Valider les données reçues
+    if (!isset($data['invite']) || !isset($data['table']) || !isset($data['invite_code'])) {
+        throw new Exception("Les champs invite, table et invite_code sont requis");
+    }
+
+    // Ajouter la nouvelle invitation
+    $entries[] = [
+        'invite' => $data['invite'],
+        'table' => $data['table'],
+        'code' => $data['code'] ?? null,
+        'invite_code' => $data['invite_code']
+    ];
+
+    // Sauvegarder dans le fichier
+    $json = json_encode($entries, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    if ($json === false) {
+        throw new Exception("Erreur lors de l'encodage JSON");
+    }
+
+    $result = file_put_contents($latestPath, $json);
+    if ($result === false) {
+        throw new Exception("Erreur lors de l'enregistrement de l'invitation");
+    }
+
+    // Mettre à jour aussi le fichier de base
+    file_put_contents($basePath, $json);
+
+    return [
+        'success' => true,
+        'message' => 'Invitation ajoutée avec succès',
+        'invitation' => $data
+    ];
+}
+
 function post_invitation_status($params , $data) {
     $code = $data['code'] ?? '';
     $status = $data['status'] ?? '';

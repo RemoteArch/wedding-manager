@@ -309,6 +309,157 @@ const Invites = ({ onClose })=>{
   );
 }
 
+const AddInvite = ({ onClose, onRefresh }) => {
+    const [invite, setInvite] = useState('');
+    const [table, setTable] = useState('');
+    const [code, setCode] = useState('');
+    const [inviteCode, setInviteCode] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const generateInviteCode = () => {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let result = '';
+        for (let i = 0; i < 5; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        setInviteCode(result);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!invite.trim() || !table.trim()) return;
+        
+        setLoading(true);
+        setError('');
+        
+        try {
+            const response = await fetch(API_BASE_URL+'/invitation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    invite: invite.trim(),
+                    table: table.trim(),
+                    code: code || null,
+                    invite_code: inviteCode || null
+                }),
+            });
+            
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Erreur lors de l\'ajout');
+            }
+            
+            if (onRefresh) onRefresh();
+            onClose();
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-800">Ajouter un invité</h3>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                    {error && (
+                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                            {error}
+                        </div>
+                    )}
+                    
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Nom de l'invité *</label>
+                        <input
+                            type="text"
+                            value={invite}
+                            onChange={(e) => setInvite(e.target.value)}
+                            placeholder="Ex: M Alphonse DAMFEU"
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-300"
+                            required
+                        />
+                    </div>
+                    
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Table *</label>
+                        <input
+                            type="text"
+                            value={table}
+                            onChange={(e) => setTable(e.target.value)}
+                            placeholder="Ex: TABLE N°01 JERUSALEM (Frank - famille)"
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-300"
+                            required
+                        />
+                    </div>
+                    
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Code</label>
+                        <select
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-300"
+                        >
+                            <option value="">Aucun</option>
+                            <option value="C">C</option>
+                            <option value="S">S</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Code d'invitation</label>
+                        <div className="flex gap-2">
+                            <input
+                                type="text"
+                                value={inviteCode}
+                                onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                                placeholder="Ex: L8W2T"
+                                maxLength={5}
+                                className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-300 font-mono uppercase"
+                            />
+                            <button
+                                type="button"
+                                onClick={generateInviteCode}
+                                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-sm font-medium"
+                            >
+                                Générer
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div className="flex gap-3 pt-4">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                        >
+                            Annuler
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={loading || !invite.trim() || !table.trim()}
+                            className="flex-1 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {loading ? 'Ajout...' : 'Ajouter'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
 const LoginPage = ({ onLogin }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -416,6 +567,7 @@ const Dashboard = ({ onLogout }) => {
     const [updatingCode, setUpdatingCode] = useState(null);
     const [copiedCode, setCopiedCode] = useState(null);
     const [isInvitesModalOpen, setIsInvitesModalOpen] = useState(false);
+    const [isAddInviteModalOpen, setIsAddInviteModalOpen] = useState(false);
 
     useEffect(() => {
         fetchInvitations();
@@ -505,6 +657,18 @@ const Dashboard = ({ onLogout }) => {
                         </span>
                     </div>
                     <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setIsAddInviteModalOpen(true)}
+                            className="flex items-center gap-2 px-4 py-2 rounded-[8px] bg-white/10 text-white hover:bg-white/20 transition-colors text-[14px]"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M19 8v6M22 11h-6" />
+                            </svg>
+                            Ajouter invité
+                        </button>
+
                         <button
                             onClick={() => setIsInvitesModalOpen(true)}
                             className="flex items-center gap-2 px-4 py-2 rounded-[8px] bg-white/10 text-white hover:bg-white/20 transition-colors text-[14px]"
@@ -791,12 +955,19 @@ const Dashboard = ({ onLogout }) => {
                 </div>
             </footer>
 
-            {isInvitesModalOpen ? (
+            {isInvitesModalOpen && (
                 <Invites onClose={() => {
                     setIsInvitesModalOpen(false);
                     fetchInvitations();
                 }} />
-            ) : null}
+            )}
+
+            {isAddInviteModalOpen && (
+                <AddInvite 
+                    onClose={() => setIsAddInviteModalOpen(false)} 
+                    onRefresh={fetchInvitations} 
+                />
+            )}
         </div>
     );
 };

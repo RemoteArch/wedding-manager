@@ -285,7 +285,7 @@ const Section6 = ()=>{
             title: 'CÉRÉMONIE',
             subtitle: 'TRADITIONNELLE',
             locationLabel: 'Domicile de la Mariée',
-            mapEmbedSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d268.1884866408759!2d9.748347298130728!3d4.005494939039126!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNMKwMDAnMTkuNyJOIDnCsDQ0JzU0LjciRQ!5e1!3m2!1sfr!2scm!4v1770372232036!5m2!1sfr!2scm',
+            mapEmbedSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d268.1880983006094!2d9.753554593536087!3d4.006679586001873!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNMKwMDAnMjQuMiJOIDnCsDQ1JzEzLjQiRQ!5e1!3m2!1sfr!2scm!4v1770402959116!5m2!1sfr!2scm',
         },
         {
             day: '7',
