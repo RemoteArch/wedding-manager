@@ -280,12 +280,12 @@ const Section6 = ()=>{
         {
             day: '6',
             month: 'Mars',
-            imageSrc: './assets/images/site/hotel-ville.png',
+            imageSrc: './assets/images/site/maison-marier.jpeg',
             time: '19h00',
             title: 'CÉRÉMONIE',
             subtitle: 'TRADITIONNELLE',
             locationLabel: 'Domicile de la Mariée',
-            mapEmbedSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d295.0607693793312!2d9.75601808278012!3d4.037035756705238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10610dbf176dc78d%3A0x97c77b35fdbc5772!2sMairie%20de%20Douala%203%C3%A8me!5e1!3m2!1sfr!2scm!4v1767631405203!5m2!1sfr!2scm',
+            mapEmbedSrc: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d268.1884866408759!2d9.748347298130728!3d4.005494939039126!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNMKwMDAnMTkuNyJOIDnCsDQ0JzU0LjciRQ!5e1!3m2!1sfr!2scm!4v1770372232036!5m2!1sfr!2scm',
         },
         {
             day: '7',
@@ -300,7 +300,7 @@ const Section6 = ()=>{
         {
             day: '7',
             month: 'Mars',
-            imageSrc: './assets/images/site/recpetion.png',
+            imageSrc: './assets/images/site/eglise.jpeg',
             time: 'A 15H00',
             title: 'BÉNÉDICTION',
             subtitle: 'NUPTIALE',
@@ -310,7 +310,7 @@ const Section6 = ()=>{
         {
             day: '7',
             month: 'Mars',
-            imageSrc: './assets/images/site/recpetion.png',
+            imageSrc: './assets/images/site/salle-fete.png',
             time: 'A 20H00',
             title: 'RÉCEPTION',
             subtitle: '',

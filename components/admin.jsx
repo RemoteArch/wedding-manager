@@ -1,5 +1,70 @@
 const { useEffect, useState, useMemo } = React;
 
+const {excelFileToAoa} = await loadModule("modules/xlsx.js");
+
+function extractInvitesFromAoA(aoa) {
+  const out = [];
+  let currentLeftTable = null;
+  let currentRightTable = null;
+
+  const asStr = (v) =>
+    v === null || v === undefined ? "" : String(v).trim();
+
+  const isTableCell = (v) => asStr(v).toUpperCase().includes("TABLE");
+
+  const looksLikeRealTableTitle = (s) =>
+    /TABLE\s*N/i.test(s); // ex: "TABLE N°01 ..."
+
+  const shouldSkipName = (name) => {
+    const n = name.toUpperCase();
+    // évite les entêtes du style "NOMS ET PRENOMS"
+    return n.includes("NOMS") && n.includes("PRENOMS");
+  };
+
+  for (let r = 0; r < aoa.length; r++) {
+    const row = aoa[r] || [];
+
+    // Colonnes (0-index)
+    const A = asStr(row[0]);
+    const B = asStr(row[1]);
+    const C = asStr(row[2]);
+    const G = asStr(row[6]);
+    const H = asStr(row[7]);
+    const I = asStr(row[8]);
+
+    // Detect table header (left block: A+B)
+    if (isTableCell(A)) {
+      const t = [A, B].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+      if (t && looksLikeRealTableTitle(t)) currentLeftTable = t;
+    }
+
+    // Detect table header (right block: G+H)
+    if (isTableCell(G)) {
+      const t = [G, H].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+      if (t && looksLikeRealTableTitle(t)) currentRightTable = t;
+    }
+
+    // Invite left: name in B, code in C
+    if (currentLeftTable && B && C && !shouldSkipName(B)) {
+      out.push({ invite: B, table: currentLeftTable, code: C });
+    }
+
+    // Invite right: name in H, code in I
+    if (currentRightTable && H && I && !shouldSkipName(H)) {
+      out.push({ invite: H, table: currentRightTable, code: I });
+    }
+  }
+
+  // Dédup (au cas où)
+  const seen = new Set();
+  return out.filter((x) => {
+    const k = `${x.invite}||${x.table}||${x.code}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}
+
 const API_BASE_URL = "/api/index.php/index";
 
 // Simple credentials (in production, use proper authentication)
@@ -7,6 +72,242 @@ const ADMIN_CREDENTIALS = {
     username: "admin",
     password: "kris&frank2026"
 };
+
+const Invites = ({ onClose })=>{
+  const [fileName, setFileName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [invites, setInvites] = useState([]);
+  const [search, setSearch] = useState("");
+
+  const genInviteCode = () => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let out = "";
+    for (let i = 0; i < 5; i++) {
+      out += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return out;
+  };
+
+  const filteredInvites = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return invites;
+    return invites.filter((x) => {
+      return (
+        String(x.invite ?? "").toLowerCase().includes(q) ||
+        String(x.table ?? "").toLowerCase().includes(q) ||
+        String(x.code ?? "").toLowerCase().includes(q)
+      );
+    });
+  }, [invites, search]);
+
+  const onPickFile = async (e) => {
+    const f = e.target.files?.[0];
+    setError("");
+    setInvites([]);
+    setSearch("");
+
+    if (!f) {
+      setFileName("");
+      return;
+    }
+
+    setFileName(f.name);
+    setLoading(true);
+    try {
+      const { firstSheet } = await excelFileToAoa(f, { defval: null });
+      const extracted = extractInvitesFromAoA(firstSheet || []);
+      const used = new Set();
+      const withCodes = (extracted || []).map((x) => {
+        let invite_code = x?.invite_code ? String(x.invite_code).trim() : "";
+        if (!invite_code || used.has(invite_code)) {
+          do {
+            invite_code = genInviteCode();
+          } while (used.has(invite_code));
+        }
+        used.add(invite_code);
+        return { ...x, invite_code };
+      });
+      setInvites(withCodes);
+    } catch (err) {
+      setError(err?.message ? String(err.message) : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onReset = () => {
+    setFileName("");
+    setLoading(false);
+    setSaving(false);
+    setError("");
+    setInvites([]);
+    setSearch("");
+    const input = document.getElementById("invites-file-input");
+    if (input) input.value = "";
+  };
+
+  const onSave = async () => {
+    setError("");
+    if (!Array.isArray(invites) || invites.length === 0) {
+      setError("Aucun invité à enregistrer");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/invitations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(invites)
+      });
+      const result = await response.json();
+      if (!result?.success) {
+        throw new Error(result?.message || 'Erreur lors de l\'enregistrement');
+      }
+      onClose?.();
+    } catch (err) {
+      setError(err?.message ? String(err.message) : String(err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[60]">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="absolute inset-0 flex items-center justify-center p-4">
+        <div className="w-full max-w-5xl bg-white rounded-[20px] shadow-2xl border border-black/10 overflow-hidden max-h-[90vh] flex flex-col">
+          <div className="px-6 py-5 bg-[#5B2A16] flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-white text-[22px] font-bold" style={{ fontFamily: '"Playfair Display", serif' }}>
+                Import des invités
+              </h1>
+              <p className="text-white/70 text-[13px] mt-1" style={{ fontFamily: '"EB Garamond", serif' }}>
+                Importez un fichier Excel puis enregistrez la liste.
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center text-white"
+              aria-label="Fermer"
+              title="Fermer"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 6L6 18" />
+                <path d="M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="p-6 overflow-y-auto">
+            <div className="flex flex-col md:flex-row md:items-end gap-4">
+              <div className="flex-1">
+                <label className="block text-[#5B2A16] text-[14px] font-medium mb-2" style={{ fontFamily: '"EB Garamond", serif' }}>
+                  Fichier Excel (.xlsx / .xls)
+                </label>
+                <input
+                  id="invites-file-input"
+                  type="file"
+                  accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                  onChange={onPickFile}
+                  className="block w-full text-[14px] file:mr-4 file:py-2 file:px-4 file:rounded-[10px] file:border-0 file:bg-[#5B2A16] file:text-white hover:file:bg-[#4a2312]"
+                  disabled={loading}
+                />
+                {fileName && (
+                  <p className="text-[12px] text-black/60 mt-2">Fichier: {fileName}</p>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={onSave}
+                  className="h-[42px] px-4 rounded-[10px] bg-[#5B2A16] text-white hover:bg-[#4a2312] transition-colors text-[14px] font-medium disabled:opacity-50"
+                  disabled={loading || saving || invites.length === 0}
+                >
+                  {saving ? 'Enregistrement…' : 'Enregistrer'}
+                </button>
+                <button
+                  onClick={onReset}
+                  className="h-[42px] px-4 rounded-[10px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-[14px] font-medium"
+                  disabled={(loading || saving) && !fileName}
+                >
+                  Réinitialiser
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <div className="mt-5 bg-red-50 border border-red-200 rounded-[12px] px-4 py-3">
+                <p className="text-red-700 text-[13px]">{error}</p>
+              </div>
+            )}
+
+            <div className="mt-6 flex flex-col md:flex-row md:items-center gap-3">
+              <div className="flex-1">
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Rechercher (nom, table, code)"
+                  className="w-full h-[44px] rounded-[12px] bg-gray-50 border border-gray-200 px-4 text-[14px] outline-none focus:border-[#5B2A16] focus:ring-2 focus:ring-[#5B2A16]/20 transition-all"
+                  disabled={loading || invites.length === 0}
+                />
+              </div>
+              <div className="text-[13px] text-black/60">
+                {loading ? "Lecture du fichier…" : `Résultats: ${filteredInvites.length}`}
+              </div>
+            </div>
+
+            <div className="mt-5 overflow-x-auto border border-black/10 rounded-[16px]">
+              <table className="min-w-full bg-white">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-black/10">
+                    <th className="px-5 py-3 text-left text-[12px] font-semibold text-black/60 uppercase tracking-wider">Invité</th>
+                    <th className="px-5 py-3 text-left text-[12px] font-semibold text-black/60 uppercase tracking-wider">Code invité</th>
+                    <th className="px-5 py-3 text-left text-[12px] font-semibold text-black/60 uppercase tracking-wider">Table</th>
+                    <th className="px-5 py-3 text-center text-[12px] font-semibold text-black/60 uppercase tracking-wider">Code</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredInvites.map((inv, idx) => (
+                    <tr key={`${inv.invite}-${inv.table}-${inv.code}-${idx}`} className="border-b border-black/5 last:border-b-0 hover:bg-gray-50/50">
+                      <td className="px-5 py-3 text-[14px] text-black/80">{inv.invite}</td>
+                      <td className="px-5 py-3 text-[14px] text-black/70">
+                        <code className="bg-gray-100 px-2 py-1 rounded text-[13px] text-gray-700 font-mono">
+                          {inv.invite_code ?? "-"}
+                        </code>
+                      </td>
+                      <td className="px-5 py-3 text-[14px] text-black/70">{inv.table}</td>
+                      <td className="px-5 py-3 text-center">
+                        <span className="inline-block px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-[12px] font-medium">
+                          {inv.code ?? "-"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {!loading && fileName && filteredInvites.length === 0 && (
+                <div className="text-center py-10">
+                  <p className="text-gray-500 text-[14px]">Aucun invité trouvé dans ce fichier (ou filtre trop strict).</p>
+                </div>
+              )}
+
+              {!loading && !fileName && (
+                <div className="text-center py-10">
+                  <p className="text-gray-500 text-[14px]">Sélectionnez un fichier Excel pour afficher les invités.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const LoginPage = ({ onLogin }) => {
     const [username, setUsername] = useState('');
@@ -114,6 +415,7 @@ const Dashboard = ({ onLogout }) => {
     const [filterTable, setFilterTable] = useState('all');
     const [updatingCode, setUpdatingCode] = useState(null);
     const [copiedCode, setCopiedCode] = useState(null);
+    const [isInvitesModalOpen, setIsInvitesModalOpen] = useState(false);
 
     useEffect(() => {
         fetchInvitations();
@@ -185,10 +487,10 @@ const Dashboard = ({ onLogout }) => {
 
     const shortTableLabel = (table) => {
         const s = String(table || '');
-        const m = s.match(/TABLE\s*N[°º]?\s*\d+/i);
-        return m ? m[0].toUpperCase() : s;
+        const m = s.match(/TABLE\s*N[°º]?\s*\d+\s+(.+)/i);
+        return m ? m[1].trim() : s;
     };
-
+    
     return (
         <div className="min-h-screen bg-gray-100">
             {/* Header */}
@@ -202,17 +504,30 @@ const Dashboard = ({ onLogout }) => {
                             Kristel & Frank
                         </span>
                     </div>
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 px-4 py-2 rounded-[8px] bg-white/10 text-white hover:bg-white/20 transition-colors text-[14px]"
-                    >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-                            <polyline points="16,17 21,12 16,7" />
-                            <line x1="21" y1="12" x2="9" y2="12" />
-                        </svg>
-                        Déconnexion
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setIsInvitesModalOpen(true)}
+                            className="flex items-center gap-2 px-4 py-2 rounded-[8px] bg-white/10 text-white hover:bg-white/20 transition-colors text-[14px]"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M12 5v14" />
+                                <path d="M5 12h14" />
+                            </svg>
+                            Importer Excel
+                        </button>
+
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 px-4 py-2 rounded-[8px] bg-white/10 text-white hover:bg-white/20 transition-colors text-[14px]"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                                <polyline points="16,17 21,12 16,7" />
+                                <line x1="21" y1="12" x2="9" y2="12" />
+                            </svg>
+                            Déconnexion
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -475,6 +790,13 @@ const Dashboard = ({ onLogout }) => {
                     </p>
                 </div>
             </footer>
+
+            {isInvitesModalOpen ? (
+                <Invites onClose={() => {
+                    setIsInvitesModalOpen(false);
+                    fetchInvitations();
+                }} />
+            ) : null}
         </div>
     );
 };

@@ -3,11 +3,32 @@
 function get_invitations($params) {
     $code = $params['code'] ?? null;
 
-    $path = __DIR__ . '/../data/inviter_with_codes.json';
+    $dir = __DIR__ . '/../data';
+    $basePath = $dir . '/inviter_with_codes.json';
+
+    $latestPath = $basePath;
+    $latestTs = -1;
+
+    $files = glob($dir . '/inviter_with_codes-*.json');
+    if (is_array($files)) {
+        foreach ($files as $f) {
+            $name = basename($f);
+            if (preg_match('/^inviter_with_codes-(\d+)\.json$/', $name, $m)) {
+                $ts = (int)$m[1];
+                if ($ts > $latestTs) {
+                    $latestTs = $ts;
+                    $latestPath = $f;
+                }
+            }
+        }
+    }
+
+    $path = $latestPath;
     $content = file_get_contents($path);
     if ($content === false) {
         throw new Exception("Fichier des invités introuvable");
     }
+
     $entries = json_decode($content, true);
     if (!is_array($entries)) {
         throw new Exception("Le format du fichier des invités est invalide");
@@ -21,6 +42,51 @@ function get_invitations($params) {
         }
     }
     throw new Exception("Aucune invitation trouvée pour ce code");
+}
+
+function post_invitations($params , $data) {
+    $dir = __DIR__ . '/../data';
+    $ts = date('YmdHis');
+    $path = $dir . '/inviter_with_codes-' . $ts . '.json';
+    $basePath = $dir . '/inviter_with_codes.json';
+
+    $entries = null;
+    if (isset($data) && is_array($data)) {
+        $entries = $data;
+    }
+
+    if (!is_array($entries)) {
+        throw new Exception("La liste des invités est requise");
+    }
+
+    foreach ($entries as $i => $entry) {
+        if (!is_array($entry)) {
+            throw new Exception("Entrée invité invalide à l'index $i");
+        }
+    }
+
+    $json = json_encode($entries, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    if ($json === false) {
+        throw new Exception("Erreur lors de l'encodage JSON");
+    }
+
+    $result = file_put_contents($path, $json);
+    if ($result === false) {
+        throw new Exception("Erreur lors de l'enregistrement des invités");
+    }
+
+    $baseResult = file_put_contents($basePath, $json);
+    if ($baseResult === false) {
+        throw new Exception("Erreur lors de l'enregistrement des invités");
+    }
+
+    return [
+        'success' => true,
+        'count' => count($entries),
+        'timestamp' => $ts,
+        'file' => basename($path),
+        'message' => 'Invités enregistrés avec succès'
+    ];
 }
 
 function post_invitation_status($params , $data) {

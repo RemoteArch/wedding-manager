@@ -29,7 +29,7 @@ const Section1 = () => {
     return (
         <section className="relative w-full h-full max-h-[650px] bg-gradient-to-b from-[#9C370B] to-[#BF5F35] p-10">
             <div className="absolute top-0  left-1/2 transform -translate-x-1/2">
-                <img src="./assets/images/home/corde.png" className="w-40" />
+                {/* <img src="./assets/images/home/corde.png" className="w-40" /> */}
             </div>
             <img src="./assets/images/home/kristelle.png" className="absolute bottom-0 left-0 max-h-[500px]" />
             <img src="./assets/images/home/franck.png" className="absolute bottom-0 right-0 max-h-[500px]" />
@@ -37,7 +37,7 @@ const Section1 = () => {
             
             <div className="absolute inset-0 z-100 flex flex-col items-center space-y-3 z-[1] pt-10 space-y-4 h-full">
                 <p className="eb-garamond text-[35px] text-[#FFD365] font-bold underline decoration-white decoration-1 underline-offset-10 decoration-dashed">{inviteData?.invite}</p>
-                <p className="eb-garamond text-[20px] text-white">Vous êtes conviés au mariage de</p>
+                <p className="eb-garamond text-[20px] text-white">Vous êtes convié (e) au mariage de</p>
                 <p className="playfair-display font-bold text-[30px] text-white">Kristel & Frank</p>
                 <div className="flex flex-col items-center space-y-3 bg-gradient-to-b from-[#ad4a21] to-[#d07c5b] p-2 mt-auto pb-10 rounded-t-xl">
                     <p className="eb-garamond max-w-30 text-white text-center">Cliquez  pour découvrir notre histoire d’amour et d’autres détails </p>
