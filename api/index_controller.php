@@ -1,9 +1,6 @@
 <?php
 
-function get_invitations($params) {
-    $code = $params['code'] ?? null;
-
-    $dir = __DIR__ . '/../data';
+function _get_latest_inviter_with_codes_path($dir) {
     $basePath = $dir . '/inviter_with_codes.json';
 
     $latestPath = $basePath;
@@ -23,7 +20,19 @@ function get_invitations($params) {
         }
     }
 
-    $path = $latestPath;
+    return [
+        'latest' => $latestPath,
+        'base' => $basePath,
+    ];
+}
+
+function get_invitations($params) {
+    $code = $params['code'] ?? null;
+
+    $dir = __DIR__ . '/../data';
+
+    $paths = _get_latest_inviter_with_codes_path($dir);
+    $path = $paths['latest'];
     $content = file_get_contents($path);
     if ($content === false) {
         throw new Exception("Fichier des invités introuvable");
@@ -91,25 +100,10 @@ function post_invitations($params , $data) {
 
 function post_invitation($params, $data) {
     $dir = __DIR__ . '/../data';
-    $basePath = $dir . '/inviter_with_codes.json';
 
-    // Trouver le dernier fichier
-    $latestPath = $basePath;
-    $latestTs = -1;
-
-    $files = glob($dir . '/inviter_with_codes-*.json');
-    if (is_array($files)) {
-        foreach ($files as $f) {
-            $name = basename($f);
-            if (preg_match('/^inviter_with_codes-(\d+)\.json$/', $name, $m)) {
-                $ts = (int)$m[1];
-                if ($ts > $latestTs) {
-                    $latestTs = $ts;
-                    $latestPath = $f;
-                }
-            }
-        }
-    }
+    $paths = _get_latest_inviter_with_codes_path($dir);
+    $latestPath = $paths['latest'];
+    $basePath = $paths['base'];
 
     // Lire le fichier existant
     $content = file_get_contents($latestPath);
@@ -159,22 +153,25 @@ function post_invitation($params, $data) {
 function post_invitation_status($params , $data) {
     $code = $data['code'] ?? '';
     $status = $data['status'] ?? '';
-    
+
     if (empty($code)) {
         throw new Exception("Le code de l'invitation est requis");
     }
-    
-    $path = __DIR__ . '/../data/inviter_with_codes.json';
+
+    $dir = __DIR__ . '/../data';
+    $paths = _get_latest_inviter_with_codes_path($dir);
+    $path = $paths['latest'];
+    $basePath = $paths['base'];
     $content = file_get_contents($path);
     if ($content === false) {
         throw new Exception("Fichier des invités introuvable");
     }
-    
+
     $entries = json_decode($content, true);
     if (!is_array($entries)) {
         throw new Exception("Le format du fichier des invités est invalide");
     }
-    
+
     $found = false;
     foreach ($entries as &$entry) {
         if (isset($entry['invite_code']) && $entry['invite_code'] === $code) {
@@ -183,17 +180,24 @@ function post_invitation_status($params , $data) {
             break;
         }
     }
-    
+
     if (!$found) {
         throw new Exception("Aucune invitation trouvée pour ce code");
     }
-    
-    $result = file_put_contents($path, json_encode($entries, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    
+
+    $json = json_encode($entries, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    if ($json === false) {
+        throw new Exception("Erreur lors de l'encodage JSON");
+    }
+
+    $result = file_put_contents($path, $json);
+
     if ($result === false) {
         throw new Exception("Erreur lors de la mise à jour du statut");
     }
-    
+
+    file_put_contents($basePath, $json);
+
     return ['success' => true, 'message' => 'Statut mis à jour avec succès'];
 }
 
