@@ -150,7 +150,7 @@ const Section3 = () => {
                         Découvrez notre filtre snap et accompagnez nous dans cette aventure
                     </p>
                     <a
-                        href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=628fbacc44394620a5cc0164b05624fb&metadata=01"
+                        href="https://snapchat.com/t/FZq20Aln"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
