@@ -6,7 +6,7 @@ function getComponentName() {
 
 // Préload lancé tout de suite (sans await)
 let initialName = getComponentName();
-const {default:initialComponent} = await loadModule('components/'+initialName+'.jsx');
+const {default:initialComponent} = await loadModule('components/'+initialName+'.js');
 
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
     if(name == initialName) return;
     initialName = name;
 
-    loadModule(`components/${name}.jsx`)
+    loadModule(`components/${name}.js`)
       .then((module) => {
         if (module?.default) setComponent(() => module.default);
         else console.error("Module chargé mais pas de default export:", module);
