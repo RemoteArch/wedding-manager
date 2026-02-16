@@ -114,7 +114,7 @@ const Section2 = () => {
             img: "./assets/images/site/reception.png",
             title: "FESTIVITE",
             title2:"RECEPTION",
-            subtitle: "Salle de fête de Cplan",
+            subtitle: "Salle de fête du Cplan",
         },
     ];
 
@@ -314,7 +314,7 @@ const Section6 = ()=>{
             time: 'A 20H00',
             title: 'RÉCEPTION',
             subtitle: '',
-            locationLabel: 'Salle de fête de Cplan',
+            locationLabel: 'Salle de fête du Cplan',
             mapEmbedSrc: 'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d350.895570372076!2d9.769305685565083!3d4.020214778152877!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sfr!2scm!4v1767632328116!5m2!1sfr!2scm',
         },
     ];
@@ -709,7 +709,7 @@ const Section8 = () => {
             <div className="w-full max-w-[520px]">
                 <div className="w-full flex flex-col items-center">
                     <h2 className="wedding-serif text-black text-[16px] tracking-[0.25em] text-center font-semibold">
-                        LAISSER NOUS UN
+                        LAISSEZ NOUS UN
                         <br />
                         MESSAGE
                     </h2>

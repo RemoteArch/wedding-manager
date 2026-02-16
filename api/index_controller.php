@@ -201,6 +201,58 @@ function post_invitation_status($params , $data) {
     return ['success' => true, 'message' => 'Statut mis à jour avec succès'];
 }
 
+function delete_invitation($params) {
+    $code = $params['code'] ?? '';
+    if (empty($code)) {
+        throw new Exception("Le code de l'invitation est requis");
+    }
+
+    $dir = __DIR__ . '/../data';
+    $paths = _get_latest_inviter_with_codes_path($dir);
+    $path = $paths['latest'];
+    $basePath = $paths['base'];
+
+    $content = file_get_contents($path);
+    if ($content === false) {
+        throw new Exception("Fichier des invités introuvable");
+    }
+
+    $entries = json_decode($content, true);
+    if (!is_array($entries)) {
+        throw new Exception("Le format du fichier des invités est invalide");
+    }
+
+    $before = count($entries);
+    $entries = array_values(array_filter($entries, function ($entry) use ($code) {
+        if (!is_array($entry)) return true;
+        return !isset($entry['invite_code']) || $entry['invite_code'] !== $code;
+    }));
+    $after = count($entries);
+
+    if ($after === $before) {
+        throw new Exception("Aucune invitation trouvée pour ce code");
+    }
+
+    $json = json_encode($entries, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    if ($json === false) {
+        throw new Exception("Erreur lors de l'encodage JSON");
+    }
+
+    $result = file_put_contents($path, $json);
+    if ($result === false) {
+        throw new Exception("Erreur lors de la suppression de l'invité");
+    }
+
+    file_put_contents($basePath, $json);
+
+    return [
+        'success' => true,
+        'message' => 'Invité supprimé avec succès',
+        'deleted' => 1,
+        'code' => $code
+    ];
+}
+
 function get_voueux($params) {
     $path = __DIR__ . '/../data/voueux.json';
     if (!file_exists($path)) {

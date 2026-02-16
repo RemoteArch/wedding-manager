@@ -73,6 +73,101 @@ const ADMIN_CREDENTIALS = {
     password: "kris&frank2026"
 };
 
+const openIframePrintPosterMobile = (title, url) => {
+  const w = window.open('', '_blank');
+  if (!w) {
+    alert("Popup bloquée. Autorisez les popups pour imprimer.");
+    return;
+  }
+
+  const safeTitle = String(title ?? '');
+  const safeUrl = String(url ?? '');
+
+  w.document.open();
+  w.document.write(`<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <!-- Important: mobile full-screen -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>${safeTitle}</title>
+    <style>
+      /* Full screen poster */
+      html, body { height: 100%; width: 100%; }
+      body { margin: 0; padding: 0; overflow: hidden; background: #fff; }
+      iframe { border: 0; width: 100vw; height: 100vh; display: block; }
+
+      /* Try to kill print margins */
+      @page { size: auto; margin: 0; }
+      @media print {
+        html, body { margin: 0 !important; padding: 0 !important; }
+        iframe { width: 100% !important; height: 100% !important; }
+      }
+
+      /* iOS safe area */
+      body { padding: env(safe-area-inset-top) env(safe-area-inset-right)
+                     env(safe-area-inset-bottom) env(safe-area-inset-left); }
+
+      /* Small helper bar (shown only if print is blocked) */
+      #hint {
+        position: fixed; left: 0; right: 0; bottom: 0;
+        padding: 10px 12px;
+        font: 14px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Arial;
+        background: rgba(0,0,0,.75);
+        color: #fff;
+        display: none;
+        z-index: 9999;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe id="print-frame" src="${safeUrl}"></iframe>
+    <div id="hint">Si l'impression ne se lance pas : menu du navigateur → “Partager / Imprimer”.</div>
+
+    <script>
+      (function(){
+        var f = document.getElementById('print-frame');
+        var hint = document.getElementById('hint');
+        if (!f) return;
+
+        var printed = false;
+
+        function doPrint(){
+          if (printed) return;
+          printed = true;
+
+          // Many mobile browsers require print() to be triggered by user gesture.
+          // We'll try anyway, and show a hint if it fails.
+          try {
+            if (f.contentWindow) {
+              f.contentWindow.focus();
+              f.contentWindow.print();
+            } else {
+              window.focus();
+              window.print();
+            }
+          } catch(e) {
+            try { window.focus(); window.print(); } catch(_) {}
+          }
+
+          // If nothing happens, show hint after a short delay
+          setTimeout(function(){
+            hint.style.display = 'block';
+          }, 1200);
+        }
+
+        f.addEventListener('load', function(){
+          // Give time to render on mobile
+          setTimeout(doPrint, 800);
+        });
+      })();
+    </script>
+  </body>
+</html>`);
+  w.document.close();
+};
+
+
 const Invites = ({ onClose })=>{
   const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -568,6 +663,7 @@ const Dashboard = ({ onLogout }) => {
     const [copiedCode, setCopiedCode] = useState(null);
     const [isInvitesModalOpen, setIsInvitesModalOpen] = useState(false);
     const [isAddInviteModalOpen, setIsAddInviteModalOpen] = useState(false);
+    const [deletingCode, setDeletingCode] = useState(null);
 
     useEffect(() => {
         fetchInvitations();
@@ -605,6 +701,37 @@ const Dashboard = ({ onLogout }) => {
         } finally {
             setUpdatingCode(null);
         }
+    };
+
+    const deleteInvitation = async (code) => {
+        if (!code) return;
+        const ok = window.confirm("Supprimer cet invité ?");
+        if (!ok) return;
+
+        setDeletingCode(code);
+        try {
+            const response = await fetch(`${API_BASE_URL}/invitation?code=${encodeURIComponent(code)}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            if (result.success) {
+                await fetchInvitations();
+            } else {
+                throw new Error(result?.message || 'Erreur lors de la suppression');
+            }
+        } catch (error) {
+            console.error('Error deleting invitation:', error);
+            alert(error?.message ? String(error.message) : String(error));
+        } finally {
+            setDeletingCode(null);
+        }
+    };
+
+    const printInvitation = (inv) => {
+        if (!inv || !inv.invite_code) return;
+        const inviteCode = String(inv.invite_code ?? '');
+        const url = `${window.location.origin}/?code=${encodeURIComponent(inv.invite_code)}#invitation`;
+        openIframePrintPosterMobile(`Invitation ${inviteCode}`, url);
     };
 
     const tables = useMemo(() => {
@@ -921,9 +1048,51 @@ const Dashboard = ({ onLogout }) => {
                                                             disabled={updatingCode === inv.invite_code}
                                                             className="px-4 py-2 rounded-[8px] bg-[#5B2A16] text-white hover:bg-[#4a2312] transition-colors text-[13px] font-medium disabled:opacity-50"
                                                         >
-                                                            {updatingCode === inv.invite_code ? 'Mise à jour...' : 'Marquer scanné'}
+                                                            {updatingCode === inv.invite_code ? (
+                                                                <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                    <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                                                                    <path d="M12 2a10 10 0 0 1 10 10" />
+                                                                </svg>
+                                                            ) : (
+                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                    <polyline points="20 6 9 17 4 12" />
+                                                                </svg>
+                                                            )}
                                                         </button>
                                                     )}
+
+                                                    <button
+                                                        onClick={() => printInvitation(inv)}
+                                                        className="px-3 py-2 rounded-[8px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-[13px] font-medium"
+                                                        title="Imprimer"
+                                                    >
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                            <polyline points="6 9 6 2 18 2 18 9" />
+                                                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                                                            <rect x="6" y="14" width="12" height="8" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <button
+                                                        onClick={() => deleteInvitation(inv.invite_code)}
+                                                        disabled={deletingCode === inv.invite_code}
+                                                        className="px-3 py-2 rounded-[8px] bg-red-100 text-red-700 hover:bg-red-200 transition-colors text-[13px] font-medium disabled:opacity-50"
+                                                        title="Supprimer"
+                                                    >
+                                                        {deletingCode === inv.invite_code ? (
+                                                            <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <path d="M21 12a9 9 0 11-6.219-8.56" />
+                                                            </svg>
+                                                        ) : (
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <polyline points="3 6 5 6 21 6" />
+                                                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                                                <path d="M10 11v6" />
+                                                                <path d="M14 11v6" />
+                                                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                                                            </svg>
+                                                        )}
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
