@@ -1,6 +1,6 @@
 const { useEffect, useState, useMemo } = React;
 
-const {excelFileToAoa} = await loadModule("modules/xlsx.js");
+const {excelFileToAoa, jsonToExcelDownload} = await loadModule("modules/xlsx.js");
 
 function extractInvitesFromAoA(aoa) {
   const out = [];
@@ -664,6 +664,7 @@ const Dashboard = ({ onLogout }) => {
     const [isInvitesModalOpen, setIsInvitesModalOpen] = useState(false);
     const [isAddInviteModalOpen, setIsAddInviteModalOpen] = useState(false);
     const [deletingCode, setDeletingCode] = useState(null);
+    const [exporting, setExporting] = useState(false);
 
     useEffect(() => {
         fetchInvitations();
@@ -751,6 +752,35 @@ const Dashboard = ({ onLogout }) => {
             return matchesSearch && matchesStatus && matchesTable;
         });
     }, [invitations, searchTerm, filterStatus, filterTable]);
+
+    const exportInvitations = async () => {
+        try {
+            setExporting(true);
+
+            const rows = (filteredInvitations || []).map((inv) => ({
+                invite: inv?.invite ?? '',
+                invite_code: inv?.invite_code ?? '',
+                table: inv?.table ?? '',
+                categorie: inv?.code ?? '',
+                status: inv?.status ?? ''
+            }));
+
+            const pad2 = (n) => String(n).padStart(2, '0');
+            const d = new Date();
+            const ts = `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}-${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}`;
+            const fileName = `invites-${ts}.xlsx`;
+
+            await jsonToExcelDownload(rows, {
+                fileName,
+                sheetName: 'Invites'
+            });
+        } catch (e) {
+            console.error('Export error:', e);
+            alert(e?.message ? String(e.message) : String(e));
+        } finally {
+            setExporting(false);
+        }
+    };
 
     const stats = useMemo(() => {
         const total = invitations.length;
@@ -924,6 +954,27 @@ const Dashboard = ({ onLogout }) => {
                                 <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
                             </svg>
                             Actualiser
+                        </button>
+
+                        <button
+                            onClick={exportInvitations}
+                            disabled={loading || exporting || filteredInvitations.length === 0}
+                            className="h-[44px] px-5 rounded-[10px] bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2 text-[14px] disabled:opacity-50"
+                            title="Exporter la liste (filtrée) en Excel"
+                        >
+                            {exporting ? (
+                                <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M21 12a9 9 0 11-6.219-8.56" />
+                                </svg>
+                            ) : (
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                    <path d="M12 18v-6" />
+                                    <path d="M9 15l3 3 3-3" />
+                                </svg>
+                            )}
+                            Exporter Excel
                         </button>
                     </div>
                 </div>
